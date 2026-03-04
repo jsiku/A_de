@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+
+export interface Props {
+  post: CollectionEntry<'blog'> & { pageNum?: number };
+}
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<article class="memo-card">
+  <div class="memo-tags">
+    {post.data.tags.map((tag: string) => (
+      <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+    ))}
+  </div>
+  <div class="memo-body prose">
+    <Content />
+  </div>
+</article>
+
+<style>
+  .memo-card {
+    background: #fffcf0;
+    padding: 2rem;
+    border-radius: 8px; /* 메모는 카드 느낌을 위해 둥글게 유지 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+  .memo-tags {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .tag {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+</style>

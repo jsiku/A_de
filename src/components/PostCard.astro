@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+const { entry } = Astro.props;
+// 이미지 경로 안정성 확보 (객체일 경우 .src 추출)
+const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover.src : entry.data.cover;
+---
+<article class="post-card">
+  <!-- 커버 이미지 영역 (링크 포함) -->
+  <a href={`/blog/${entry.slug || entry.id}`} class="cover-link">
+    {coverSrc ? (
+      <img src={coverSrc} alt={entry.data.title || 'Cover'} class="cover-img" />
+    ) : (
+      <div class="cover-placeholder"></div>
+    )}
+  </a>
+  
+  <!-- 이미지 바로 밑 간격 없이 태그 나열 -->
+  <div class="post-tags">
+    {entry.data.tags.map((tag: string) => (
+      <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+    ))}
+  </div>
+  
+  <div class="post-content">
+    <h2 class="post-title">
+      <a href={`/blog/${entry.slug || entry.id}`}>{entry.data.title}</a>
+    </h2>
+    {entry.data.description && <p class="post-desc">{entry.data.description}</p>}
+  </div>
+</article>
+
+<style>
+  .post-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .cover-link {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+  }
+  .cover-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s;
+    /* 요구사항: 각지게 (border-radius 없음) */
+  }
+  .cover-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #f0f0f0;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .cover-link:hover .cover-img,
+  .cover-link:hover .cover-placeholder {
+    opacity: 0.85;
+  }
+  /* 이미지 바로 밑 태그 */
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: #111;
+    padding: 0.5rem;
+  }
+  .post-tags .tag {
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  .post-content {
+    padding: 1.5rem 0;
+  }
+  .post-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+  }
+  .post-title a {
+    color: #111;
+    text-decoration: none;
+  }
+  .post-desc {
+    color: #555;
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>
