@@ -8,7 +8,7 @@ const blogCollection = defineCollection({
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
-    type: z.enum(["post", "memo", "tags", "hej"]).default("post"), // ✨ option 대신 type으로 완벽 통합
+    type: z.enum(["post", "memo", "tags", "hej"]).default("post"), // ✨ 4가지 타입 통합 완벽 적용
     description: z.string().optional(),
     cover: image().optional(),
     draft: z.boolean().optional(),
