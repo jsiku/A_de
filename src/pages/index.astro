@@ -5,23 +5,24 @@ import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
+// 타입 에러 우회를 위한 별칭
 type BlogEntry = CollectionEntry<"blog">;
+
 const allEntries = await getCollection('blog');
 
-// memo 타입 제외 (post, hej, tags 등 포함 혹은 명시적 post만 포함)
+// memo 타입 제외
 const postsOnly = allEntries.filter((entry: BlogEntry) => entry.data.type !== 'memo');
 const sortedEntries = postsOnly.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-// 10개 단위 페이지네이션 계산
+// 한 페이지당 10개 표시
 const POSTS_PER_PAGE = 10;
 const totalPages = Math.ceil(postsOnly.length / POSTS_PER_PAGE) || 1;
 const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-// 태그 추출
 const allTags = postsOnly.flatMap((entry: BlogEntry) => entry.data.tags || []);
 const uniqueTags = [...new Set(allTags)];
 
-// 월 단위 그룹화 및 pageNum 주입
+// 월 단위 그룹화 및 pageNum 속성 부여
 const groupedEntries: { month: string, entries: (BlogEntry & { pageNum: number })[] }[] = [];
 
 sortedEntries.forEach((entry, index) => {
@@ -45,12 +46,10 @@ sortedEntries.forEach((entry, index) => {
   <div class="post-list-container">
     {groupedEntries.map(group => (
       <div class="month-group">
-        <!-- 왼쪽 월 표시 (스크롤 시 고정) -->
         <aside class="month-sidebar">
           <span class="sticky-month">{group.month}</span>
         </aside>
         
-        <!-- 오른쪽 포스트 카드 리스트 -->
         <div class="month-content">
           {group.entries.map(entry => (
             <div class="post-item" data-page={entry.pageNum}>
@@ -60,42 +59,28 @@ sortedEntries.forEach((entry, index) => {
         </div>
       </div>
     ))}
-  </div>
 
-  <!-- 페이지네이션 컨트롤 -->
-  {totalPages > 1 && (
-    <div class="pagination">
-      <button class="page-nav prev-page">&lt;</button>
-      {pages.map(page => (
-        <button class="page-btn" data-target-page={page}>{page}</button>
-      ))}
-      <button class="page-nav next-page">&gt;</button>
-    </div>
-  )}
+    <!-- 하단 페이지네이션 렌더링 -->
+    {totalPages > 1 && (
+      <div class="pagination">
+        {pages.map((page) => (
+          <button class="page-btn" data-target-page={page}>{page}</button>
+        ))}
+      </div>
+    )}
+  </div>
 </BaseLayout>
 
 <script>
   const pageBtns = document.querySelectorAll('.page-btn');
   const postItems = document.querySelectorAll('.post-item');
-  const prevBtn = document.querySelector('.prev-page');
-  const nextBtn = document.querySelector('.next-page');
-  const totalPages = pageBtns.length;
-  let currentPage = 1;
 
   function showPage(page: number) {
-    currentPage = page;
-    
-    // 포스트 숨김/표시
     postItems.forEach((item) => {
       const el = item as HTMLElement;
-      if (parseInt(el.dataset.page || '1') === page) {
-        el.style.display = 'block';
-      } else {
-        el.style.display = 'none';
-      }
+      el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
     });
     
-    // 버튼 활성화
     pageBtns.forEach(btn => {
       if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
         btn.classList.add('active');
@@ -104,7 +89,6 @@ sortedEntries.forEach((entry, index) => {
       }
     });
 
-    // 월(Month) 그룹 숨김/표시 로직
     document.querySelectorAll('.month-group').forEach(group => {
       const visibleItems = group.querySelectorAll('.post-item[style="display: block;"]');
       (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
@@ -115,76 +99,23 @@ sortedEntries.forEach((entry, index) => {
 
   pageBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const target = parseInt((e.target as HTMLElement).getAttribute('data-target-page') || '1');
+      const target = parseInt((e.currentTarget as HTMLElement).getAttribute('data-target-page') || '1');
       showPage(target);
     });
   });
 
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      if (currentPage > 1) showPage(currentPage - 1);
-    });
-  }
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      if (currentPage < totalPages) showPage(currentPage + 1);
-    });
-  }
-
-  // 초기 1페이지 표시
-  if (totalPages > 0) showPage(1);
+  if (pageBtns.length > 0) showPage(1);
 </script>
 
 <style>
-  .post-list-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  .month-group {
-    display: flex;
-    gap: 2rem;
-  }
-  .month-sidebar {
-    flex: 0 0 100px;
-  }
-  .sticky-month {
-    position: sticky;
-    top: 100px; /* 헤더 메뉴 아래 여백 */
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: #111;
-  }
-  .month-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  /* 페이지네이션 디자인 */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 4rem 0;
-  }
-  .page-btn, .page-nav {
-    background: none;
-    border: none;
-    padding: 0.5rem 0.8rem;
-    cursor: pointer;
-    font-size: 1.1rem;
-    color: #555;
-    font-weight: bold;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-  .page-btn:hover, .page-nav:hover {
-    color: #111;
-    background: #f5f5f5;
-  }
-  .page-btn.active {
-    color: #fff;
-    background: #111;
-  }
+  .post-list-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+  .month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .month-sidebar { flex: 0 0 100px; }
+  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
+  .month-content { flex: 1; display: flex; flex-direction: column; }
+  
+  .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
+  .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
+  .page-btn:hover { background: #f5f5f5; color: #111; }
+  .page-btn.active { background: #111; color: #fff; border-color: #111; }
 </style>

@@ -1,26 +1,19 @@
 ---
 import HeroSvg from './HeroSvg.astro';
 
-interface Props {
-  uniqueTags: string[];
-}
+interface Props { uniqueTags: string[]; }
 const { uniqueTags } = Astro.props;
 ---
 <section class="hero-container">
   <HeroSvg />
   <div class="hero-controls">
-    <!-- 검색창: 900px 꽉 채움 -->
     <form action="/search/" method="get" class="search-form">
       <input type="text" name="q" placeholder="Type keyword..." required />
       <button type="submit">Search</button>
     </form>
-    
-    <!-- 태그 컨테이너: 좌측 나열, All tags 우측 고정 -->
     <div class="tags-container">
       <div class="tags-list">
-        {uniqueTags.map(tag => (
-          <a href={`/tags/${tag}`} class="tag-link">#{tag}</a>
-        ))}
+        {uniqueTags.map(tag => ( <a href={`/tags/${tag}`} class="tag-link">#{tag}</a> ))}
       </div>
       <a href="/tags" class="all-tags-link">All tags</a>
     </div>
@@ -28,57 +21,14 @@ const { uniqueTags } = Astro.props;
 </section>
 
 <style>
-  .hero-container {
-    margin-bottom: 3rem;
-  }
-  .hero-controls {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  .search-form {
-    display: flex;
-    width: 100%;
-    gap: 0.5rem;
-  }
-  .search-form input {
-    flex: 1;
-    padding: 0.8rem 1rem;
-    border: 2px solid #111;
-    font-size: 1rem;
-  }
-  .search-form button {
-    padding: 0 2rem;
-    background: #111;
-    color: #fff;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  .tags-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-  }
-  .tags-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-  }
-  .tag-link, .all-tags-link {
-    text-decoration: none;
-    color: #555;
-    font-weight: 500;
-  }
-  .all-tags-link {
-    color: #111;
-    font-weight: bold;
-    border-bottom: 2px solid #111;
-    white-space: nowrap;
-    margin-left: 1rem;
-  }
+  .hero-container { margin-bottom: 3rem; }
+  .hero-controls { max-width: 900px; margin: 0 auto; padding: 2rem 20px; display: flex; flex-direction: column; gap: 1.5rem; }
+  .search-form { display: flex; width: 100%; gap: 0.5rem; }
+  .search-form input { flex: 1; padding: 0.8rem 1rem; border: 2px solid #111; font-size: 1rem; }
+  .search-form button { padding: 0 2rem; background: #111; color: #fff; border: none; font-weight: bold; cursor: pointer; }
+  .tags-container { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+  .tags-list { display: flex; flex-wrap: wrap; gap: 0.8rem; flex: 1; }
+  .tag-link { color: #555; text-decoration: none; font-weight: 500; }
+  .tag-link:hover { color: #111; text-decoration: underline; }
+  .all-tags-link { color: #111; font-weight: bold; text-decoration: none; border-bottom: 2px solid #111; white-space: nowrap; margin-left: 2rem; }
 </style>
