@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MemoCard from '../components/MemoCard.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+type BlogEntry = CollectionEntry<"blog">;
+
+const allEntries = await getCollection('blog');
+
+// 'memo' 타입만 필터링 후 날짜순 정렬
+const memosOnly = allEntries.filter((entry: BlogEntry) => entry.data.type === 'memo');
+const sortedMemos = memosOnly.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// 10개 단위 페이지네이션 계산
+const POSTS_PER_PAGE = 10;
+const totalPages = Math.ceil(memosOnly.length / POSTS_PER_PAGE) || 1;
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+// '일(DD)' 단위 그룹화 및 pageNum 주입
+const groupedMemos: { date: string, entries: (BlogEntry & { pageNum: number })[] }[] = [];
+
+sortedMemos.forEach((entry, index) => {
+  const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
+  const entryWithPage = Object.assign({}, entry, { pageNum });
+  
+  // yyyy.mm.dd 포맷
+  const dateObj = new Date(entry.data.date);
+  const dateStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
+  
+  const lastGroup = groupedMemos[groupedMemos.length - 1];
+  if (!lastGroup || lastGroup.date !== dateStr) {
+    groupedMemos.push({ date: dateStr, entries: [entryWithPage] });
+  } else {
+    lastGroup.entries.push(entryWithPage);
+  }
+});
+---
+<BaseLayout title="Notes | Siku.name">
+  
+  <!-- Notes 전용 상단 히어로 (좌우 100vw 꽉참) -->
+  <div class="page-hero full-bleed">
+    <div class="hero-content">
+      <h1>Notes</h1>
+      <p>짧은 생각, 스니펫, 그리고 일상의 파편들</p>
+    </div>
+  </div>
+
+  <!-- 본문 컨테이너 (가운데 800px 정렬) -->
+  <div class="content-container">
+    <div class="post-list-container">
+      {groupedMemos.map(group => (
+        <div class="date-group">
+          <aside class="date-sidebar">
+            <span class="sticky-date">{group.date}</span>
+          </aside>
+          
+          <div class="date-content">
+            {group.entries.map((entry) => (
+              <div class="memo-item" data-page={entry.pageNum}>
+                <!-- 형님께서 수정하신 대로 post={entry}로 넘깁니다! -->
+                <MemoCard post={entry} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <!-- 하단 페이지네이션 렌더링 -->
+      {totalPages > 1 && (
+        <div class="pagination">
+          {pages.map((page) => (
+            <button class="page-btn" data-target-page={page}>{page}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const pageBtns = document.querySelectorAll('.page-btn');
+  const memoItems = document.querySelectorAll('.memo-item');
+
+  function showPage(page: number) {
+    memoItems.forEach((item) => {
+      const el = item as HTMLElement;
+      el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
+    });
+    
+    pageBtns.forEach(btn => {
+      if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 화면에 보이는 카드가 없는 날짜(Date) 그룹 숨기기
+    document.querySelectorAll('.date-group').forEach(group => {
+      const visibleItems = group.querySelectorAll('.memo-item[style="display: block;"]');
+      (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
+    });
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  pageBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = parseInt((e.currentTarget as HTMLElement).getAttribute('data-target-page') || '1');
+      showPage(target);
+    });
+  });
+
+  if (pageBtns.length > 0) showPage(1);
+</script>
+
+<style>
+  /* 히어로 영역 (100vw) */
+  .page-hero {
+    background: #fdfdfd;
+    border-bottom: 1px solid #eaeaea;
+    padding: 4rem 20px;
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .hero-content h1 {
+    font-size: 3rem;
+    margin: 0 0 0.5rem 0;
+    color: #111;
+  }
+  .hero-content p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  /* 본문 영역 (가운데 정렬) */
+  .content-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .date-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .date-sidebar { flex: 0 0 100px; }
+  .sticky-date { position: sticky; top: 100px; font-size: 1rem; font-family: monospace; font-weight: 800; color: #111; }
+  .date-content { flex: 1; display: flex; flex-direction: column; }
+  
+  .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
+  .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
+  .page-btn:hover { background: #f5f5f5; color: #111; }
+  .page-btn.active { background: #111; color: #fff; border-color: #111; }
+</style>

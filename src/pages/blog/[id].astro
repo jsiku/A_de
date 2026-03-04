@@ -5,19 +5,18 @@ import { getCollection, render } from 'astro:content';
 export async function getStaticPaths() {
   const allEntries = await getCollection('blog');
   
-  // older / newer 링크를 위해 날짜순 정렬
-  // 예외 처리 없이 모든 데이터를 렌더링하여 option 구분이 없도록 대응합니다.
-  const sorted = allEntries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  // 이전/다음 글 링크를 위해 memo를 제외한 포스트만 필터링 후 날짜순 정렬
+  const posts = allEntries.filter(p => p.data.type !== 'memo').sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-  return sorted.map((post, index) => {
+  return posts.map((post, index) => {
     return {
       params: { id: post.slug || post.id },
       props: {
         post,
-        prevPost: index + 1 < sorted.length ? sorted[index + 1] : null, // 이전 글 (더 오래된 글)
-        nextPost: index - 1 >= 0 ? sorted[index - 1] : null, // 다음 글 (더 최신 글)
+        prevPost: index + 1 < posts.length ? posts[index + 1] : null,
+        nextPost: index - 1 >= 0 ? posts[index - 1] : null,
       }
-    }
+    };
   });
 }
 
@@ -26,6 +25,8 @@ const { Content } = await render(post);
 
 // 이미지 객체(.src) 추출 안전장치
 const coverSrc = typeof post.data.cover === 'object' ? post.data.cover?.src : post.data.cover;
+
+// 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
 const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g, '.');
 ---
 <BaseLayout title={`${post.data.title || 'Post'} | Siku.name`}>
@@ -42,7 +43,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
     </div>
   </div>
 
-  <!-- 커버 이미지 영역: 화면을 꽉 채우고 고정 (패럴랙스) -->
+  <!-- 커버 이미지 영역: 화면을 좌우 꽉 채우고 고정 (패럴랙스) -->
   {coverSrc && (
     <div class="fixed-cover-container" id="coverContainer">
       <img src={coverSrc} alt="Cover Image" class="full-bleed-cover" />
@@ -51,7 +52,6 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
 
   <!-- 본문 영역: 이미지 밑에 있다가 위로 덮으며 올라옴 -->
   <article class={`post-content-wrapper ${!coverSrc ? 'no-cover' : ''}`}>
-     <!-- 작성일 및 태그 등 메타 정보 영역 -->
      <div class="post-header prose">
         <h1 class="post-main-title">{post.data.title}</h1>
         <div class="post-meta">
@@ -72,13 +72,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
 </BaseLayout>
 
 <style>
-  /* 1. 이 페이지에서만 기존 글로벌 헤더를 absolute로 바꿔서 스크롤 시 자연스럽게 위로 사라지게 함 */
-  :global(.site-header) {
-    position: absolute !important;
-    width: 100%;
-  }
-
-  /* 2. 포스트 전용 고정 메뉴바 */
+  /* 포스트 전용 고정 메뉴바 */
   .post-navbar {
     position: fixed;
     top: 0;
@@ -102,32 +96,27 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
     align-items: center;
     font-weight: 700;
   }
-  .post-navbar a {
-    color: #111;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .post-navbar a:hover {
-    opacity: 0.6;
-  }
-  .disabled {
-    opacity: 0.3;
-    pointer-events: none;
-  }
+  .post-navbar a { color: #111; text-decoration: none; transition: opacity 0.2s; }
+  .post-navbar a:hover { opacity: 0.6; }
+  .disabled { opacity: 0.3; pointer-events: none; }
+  
   .center-menu {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
   }
   .index-btn {
-    border-bottom: 2px solid #111;
+    transition: all 0.2s;
+  }
+  .index-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
   }
   .reading-title {
     font-weight: 500;
     opacity: 0.8;
   }
 
-  /* 3. 좌우 꽉 차는 고정 커버 이미지 */
+  /* 좌우 꽉 차는 고정 커버 이미지 (각진 모서리) */
   .fixed-cover-container {
     position: fixed;
     top: 0;
@@ -143,7 +132,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
     object-fit: cover;
   }
 
-  /* 4. 본문 영역 */
+  /* 본문 영역 */
   .post-content-wrapper {
     margin-top: 45vh; /* 이미지 높이만큼 아래에서 시작하여 이미지를 덮으며 올라옴 */
     background: #fff;
@@ -151,63 +140,50 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
     z-index: 1;
     padding: 4rem 20px;
     min-height: 100vh;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.05); /* 덮는 느낌을 위한 그림자 */
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
   }
   .post-content-wrapper.no-cover {
-    margin-top: 6rem;
+    margin-top: 2rem;
     box-shadow: none;
   }
 
   /* 메타 정보 디자인 */
-  .post-header {
-    margin-bottom: 3rem;
-    text-align: center;
-  }
-  .post-main-title {
-    font-size: 2.5rem;
-    margin: 0 0 1rem 0;
-  }
-  .post-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-  .date {
-    color: #888;
-    font-size: 1rem;
-  }
-  .tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .tag {
-    background: #111;
-    color: #fff;
-    padding: 0.3rem 0.6rem;
-    font-size: 0.85rem;
-    text-decoration: none;
-  }
+  .post-header { margin-bottom: 3rem; text-align: center; }
+  .post-main-title { font-size: 2.5rem; margin: 0 0 1rem 0; }
+  .post-meta { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .date { color: #888; font-size: 1rem; font-family: monospace; }
+  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .tag { background: #111; color: #fff; padding: 0.3rem 0.6rem; font-size: 0.85rem; text-decoration: none; transition: background 0.2s; }
+  .tag:hover { background: #D4AF37; color: #111; }
 </style>
 
 <script>
   const postNavbar = document.getElementById('postNavbar');
   const coverContainer = document.getElementById('coverContainer');
+  const globalHeader = document.querySelector('.site-header') as HTMLElement;
 
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
 
-    // 1. 커버 이미지 페이드아웃 효과
+    // 1. 글로벌 헤더 숨기기 (단일 포스트에서만 작동)
+    if (globalHeader) {
+      if (scrollY > 50) {
+        globalHeader.style.transform = 'translateY(-100%)';
+        globalHeader.style.transition = 'transform 0.3s ease';
+      } else {
+        globalHeader.style.transform = 'translateY(0)';
+      }
+    }
+
+    // 2. 커버 이미지 페이드아웃 효과
     if (coverContainer) {
-      const fadeRate = 350; // 숫자가 작을수록 빨리 투명해짐
+      const fadeRate = 350; 
       const opacity = Math.max(1 - scrollY / fadeRate, 0);
       coverContainer.style.opacity = opacity.toString();
     }
 
-    // 2. 글로벌 헤더가 사라질 쯤 포스트 전용 메뉴바 노출
-    if (scrollY > 100) {
+    // 3. 포스트 전용 겨자색 메뉴바 노출
+    if (scrollY > 150) {
       postNavbar?.classList.add('visible');
     } else {
       postNavbar?.classList.remove('visible');
