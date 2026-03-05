@@ -23,11 +23,11 @@ const groupedMemos: { date: string, entries: (BlogEntry & { pageNum: number })[]
 sortedMemos.forEach((entry, index) => {
   const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
   const entryWithPage = Object.assign({}, entry, { pageNum });
-  
+
   // yyyy.mm.dd 포맷
   const dateObj = new Date(entry.data.date);
   const dateStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
-  
+
   const lastGroup = groupedMemos[groupedMemos.length - 1];
   if (!lastGroup || lastGroup.date !== dateStr) {
     groupedMemos.push({ date: dateStr, entries: [entryWithPage] });
@@ -37,9 +37,14 @@ sortedMemos.forEach((entry, index) => {
 });
 ---
 <BaseLayout title="Notes | Siku.name">
-  
+
   <!-- Notes 전용 상단 히어로 (좌우 100vw 꽉참) -->
   <div class="page-hero full-bleed">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" class="hero-bg">
+      <rect width="100%" height="100%" fill="#F0C0F8" />
+      <path d="M0,150 Q300,50 600,150 T1200,150 L1200,300 L0,300 Z" fill="#E1E8ED" opacity="0.6"/>
+      <circle cx="900" cy="100" r="40" fill="#D4AF37" opacity="0.2"/>
+    </svg>
     <div class="hero-content">
       <h1>Notes</h1>
       <p>짧은 생각, 스니펫, 그리고 일상의 파편들</p>
@@ -54,7 +59,7 @@ sortedMemos.forEach((entry, index) => {
           <aside class="date-sidebar">
             <span class="sticky-date">{group.date}</span>
           </aside>
-          
+
           <div class="date-content">
             {group.entries.map((entry) => (
               <div class="memo-item" data-page={entry.pageNum}>
@@ -87,7 +92,7 @@ sortedMemos.forEach((entry, index) => {
       const el = item as HTMLElement;
       el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
     });
-    
+
     pageBtns.forEach(btn => {
       if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
         btn.classList.add('active');
@@ -101,7 +106,7 @@ sortedMemos.forEach((entry, index) => {
       const visibleItems = group.querySelectorAll('.memo-item[style="display: block;"]');
       (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
     });
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -118,22 +123,27 @@ sortedMemos.forEach((entry, index) => {
 <style>
   /* 히어로 영역 (100vw) */
   .page-hero {
-    background: #fdfdfd;
-    border-bottom: 1px solid #eaeaea;
-    padding: 4rem 20px;
+    position: relative;
+    height: 30vh;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    margin-bottom: 4rem;
   }
-  .hero-content h1 {
-    font-size: 3rem;
-    margin: 0 0 0.5rem 0;
-    color: #111;
-  }
-  .hero-content p {
-    color: #666;
-    font-size: 1.1rem;
-    margin: 0;
-  }
+  .hero-content h1 { font-size: 3.5rem; margin: 0 0 0.5rem 0; color: #111; letter-spacing: -1px; }
+  .hero-content p { color: #555; font-size: 1.2rem; margin: 0; }
 
   /* 본문 영역 (가운데 정렬) */
   .content-container {
@@ -141,12 +151,12 @@ sortedMemos.forEach((entry, index) => {
     margin: 0 auto;
     padding: 0 20px;
   }
-  
+
   .date-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
   .date-sidebar { flex: 0 0 100px; }
   .sticky-date { position: sticky; top: 100px; font-size: 1rem; font-family: monospace; font-weight: 800; color: #111; }
   .date-content { flex: 1; display: flex; flex-direction: column; }
-  
+
   .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
   .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
   .page-btn:hover { background: #f5f5f5; color: #111; }
