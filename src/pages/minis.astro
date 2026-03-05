@@ -1,0 +1,267 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Minis | Siku.name">
+  
+  <!-- 중간 높이의 커버 이미지와 오버레이 텍스트 -->
+  <div class="page-hero full-bleed">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" class="hero-bg">
+      <rect width="100%" height="100%" fill="#F0F4F8" />
+      <path d="M0,150 Q300,50 600,150 T1200,150 L1200,300 L0,300 Z" fill="#E1E8ED" opacity="0.6"/>
+      <circle cx="900" cy="100" r="40" fill="#D4AF37" opacity="0.2"/>
+    </svg>
+    <div class="hero-content">
+      <h1>Minis</h1>
+      <p>작은 도구들과 실험적인 스니펫 모음</p>
+    </div>
+  </div>
+
+  <!-- TOC 메뉴바 (스크롤 시 상단 고정) -->
+  <div class="minis-toc full-bleed">
+    <div class="toc-inner">
+      <a href="#svg-generator">🎨 SVG 생성기</a>
+      <a href="#youtube-cut">✂️ 유튜브 컷 (준비 중)</a>
+    </div>
+  </div>
+
+  <!-- 900px 본문 컨테이너 -->
+  <div class="minis-container">
+    
+    <!-- 첫 번째 도구: SVG 생성기 -->
+    <section id="svg-generator" class="tool-section">
+      <div class="tool-header">
+        <h2>🎨 추상 SVG 생성기</h2>
+        <p>어떤 텍스트든 입력하면 Gemini가 느낌을 파악해 현대적인 SVG 아트로 그려줍니다.</p>
+      </div>
+      
+      <div class="tool-body">
+        <textarea id="svg-input" rows="3" placeholder="예: 비 내리는 밤의 고양이, 기하학적인 우주 등 어떤 글이든 입력하세요."></textarea>
+        <button id="svg-btn" class="action-btn">이미지 생성하기</button>
+        
+        <div id="svg-result-container" class="result-box" style="display: none;">
+          <div id="svg-output"></div>
+          <!-- 그림이 생성되면 나타나는 복사 버튼 -->
+          <button id="copy-btn" class="action-btn outline" style="margin-top: 1rem;">SVG 코드 복사하기</button>
+        </div>
+        <p id="svg-loading" class="loading-msg" style="display: none;">그림을 그리는 중입니다. 잠시만 기다려주세요...</p>
+        <p id="svg-error" class="error-msg" style="display: none;"></p>
+      </div>
+    </section>
+
+    <hr class="divider" />
+
+    <!-- 두 번째 도구: 유튜브 컷 -->
+    <section id="youtube-cut" class="tool-section">
+      <div class="tool-header">
+        <h2>✂️ 유튜브 컷</h2>
+        <p>유튜브 링크를 통해 필요한 구간을 컷팅합니다. (기능 연결 대기 중)</p>
+      </div>
+      
+      <div class="tool-body">
+        <input type="text" class="dummy-input" placeholder="유튜브 URL을 입력하세요..." disabled />
+        <button class="action-btn disabled">구간 설정하기</button>
+        <div class="dummy-placeholder">
+          결과물이 여기에 표시됩니다.
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<script>
+  // SVG 생성기 클라이언트 로직
+  const btn = document.getElementById('svg-btn');
+  const input = document.getElementById('svg-input') as HTMLTextAreaElement;
+  const output = document.getElementById('svg-output');
+  const resultContainer = document.getElementById('svg-result-container');
+  const loading = document.getElementById('svg-loading');
+  const errorMsg = document.getElementById('svg-error');
+  const copyBtn = document.getElementById('copy-btn');
+
+  let currentSvgCode = "";
+
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      const text = input?.value.trim();
+      if (!text) {
+        alert("텍스트를 입력해주세요!");
+        return;
+      }
+
+      if (loading) loading.style.display = "block";
+      if (errorMsg) errorMsg.style.display = "none";
+      if (resultContainer) resultContainer.style.display = "none";
+      if (output) output.innerHTML = "";
+      if (btn) btn.setAttribute("disabled", "true");
+
+      try {
+        const res = await fetch('/api/generate-svg', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "알 수 없는 에러가 발생했습니다.");
+        }
+
+        currentSvgCode = data.svg;
+
+        if (output) output.innerHTML = currentSvgCode;
+        if (resultContainer) resultContainer.style.display = "block";
+        if (copyBtn) {
+          copyBtn.textContent = "SVG 코드 복사하기";
+          copyBtn.style.background = "transparent";
+          copyBtn.style.color = "#111";
+        }
+
+      } catch (error: any) {
+        if (errorMsg) {
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = "block";
+        }
+      } finally {
+        if (loading) loading.style.display = "none";
+        if (btn) btn.removeAttribute("disabled");
+      }
+    });
+  }
+
+  // 복사 버튼 로직
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      if (!currentSvgCode) return;
+      navigator.clipboard.writeText(currentSvgCode).then(() => {
+        copyBtn.textContent = "✅ 복사 완료!";
+        copyBtn.style.background = "#D4AF37";
+        copyBtn.style.color = "#fff";
+      });
+    });
+  }
+</script>
+
+<style>
+  /* 히어로 영역 (중간 높이) */
+  .page-hero {
+    position: relative;
+    height: 30vh;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .hero-content h1 { font-size: 3.5rem; margin: 0 0 0.5rem 0; color: #111; letter-spacing: -1px; }
+  .hero-content p { color: #555; font-size: 1.2rem; margin: 0; }
+
+  /* TOC 서브 메뉴바 (Sticky) */
+  .minis-toc {
+    position: sticky;
+    top: 70px; /* 메인 헤더 높이에 따라 조절 */
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid #eaeaea;
+    backdrop-filter: blur(5px);
+  }
+  .toc-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 20px;
+    display: flex;
+    gap: 2rem;
+  }
+  .toc-inner a {
+    color: #555;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .toc-inner a:hover { color: #D4AF37; }
+
+  /* 본문 컨테이너 */
+  .minis-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 20px;
+  }
+
+  /* 툴 섹션 공통 스타일 */
+  .tool-section { margin-bottom: 6rem; scroll-margin-top: 150px; }
+  .tool-header { margin-bottom: 2rem; }
+  .tool-header h2 { font-size: 2rem; margin: 0 0 0.5rem 0; }
+  .tool-header p { color: #666; margin: 0; }
+  
+  .tool-body {
+    background: #f9f9f9;
+    border: 1px solid #eaeaea;
+    padding: 2rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* UI 요소들 */
+  textarea, .dummy-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+  }
+  .dummy-input { background: #eee; cursor: not-allowed; }
+  
+  .action-btn {
+    align-self: flex-start;
+    background: #111;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .action-btn:hover:not(:disabled) { background: #D4AF37; }
+  .action-btn:disabled, .action-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+  .action-btn.outline { background: transparent; color: #111; border: 2px solid #111; }
+  .action-btn.outline:hover { background: #eee; }
+
+  /* 결과창 */
+  .result-box {
+    margin-top: 1rem;
+    background: #fff;
+    padding: 2rem;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .dummy-placeholder {
+    margin-top: 1rem;
+    background: #fff;
+    padding: 4rem 2rem;
+    border: 1px dashed #ccc;
+    text-align: center;
+    color: #999;
+  }
+  .loading-msg { color: #D4AF37; font-weight: bold; }
+  .error-msg { color: #d9534f; font-weight: bold; }
+  .divider { border: 0; border-top: 1px solid #eaeaea; margin: 4rem 0; }
+</style>
