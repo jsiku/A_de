@@ -4,13 +4,13 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const allEntries = await getCollection('blog');
-  
+
   // 이전/다음 글 링크를 위해 memo를 제외한 포스트만 필터링 후 날짜순 정렬
   const posts = allEntries.filter(p => p.data.type !== 'memo').sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return posts.map((post, index) => {
     return {
-      params: { id: post.slug || post.id },
+      params: { id: post.id },
       props: {
         post,
         prevPost: index + 1 < posts.length ? posts[index + 1] : null,
@@ -27,19 +27,19 @@ const { Content } = await render(post);
 const coverSrc = typeof post.data.cover === 'object' ? post.data.cover?.src : post.data.cover;
 
 // 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
-const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g, '.');
+const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-/g, '.');
 ---
 <BaseLayout title={`${post.data.title || 'Post'} | Siku.name`}>
-  
+
   <!-- 포스트 전용 고정 메뉴바 (겨자색 톤 적용) -->
   <div class="post-navbar" id="postNavbar">
     <div class="post-navbar-inner">
-      <a href={prevPost ? `/blog/${prevPost.slug || prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
+      <a href={prevPost ? `/blog/${prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
       <div class="center-menu">
         <a href="/" class="index-btn">▲ Index</a>
         <span class="reading-title">Reading: {post.data.title}</span>
       </div>
-      <a href={nextPost ? `/blog/${nextPost.slug || nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
+      <a href={nextPost ? `/blog/${nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
     </div>
   </div>
 
@@ -99,7 +99,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
   .post-navbar a { color: #111; text-decoration: none; transition: opacity 0.2s; }
   .post-navbar a:hover { opacity: 0.6; }
   .disabled { opacity: 0.3; pointer-events: none; }
-  
+
   .center-menu {
     display: flex;
     align-items: center;
@@ -140,7 +140,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
     z-index: 1;
     padding: 4rem 20px;
     min-height: 100vh;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
   }
   .post-content-wrapper.no-cover {
     margin-top: 2rem;
@@ -177,7 +177,7 @@ const postDate = new Date(post.data.date).toISOString().split('T').replace(/-/g,
 
     // 2. 커버 이미지 페이드아웃 효과
     if (coverContainer) {
-      const fadeRate = 350; 
+      const fadeRate = 350;
       const opacity = Math.max(1 - scrollY / fadeRate, 0);
       coverContainer.style.opacity = opacity.toString();
     }

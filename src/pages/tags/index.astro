@@ -20,12 +20,12 @@ const renderedPosts = await Promise.all(
   <div class="tags-intro-container prose">
     <h1 class="page-title">Tags</h1>
     <p class="page-desc">블로그를 관통하는 주요 주제와 태그들에 대한 이야기입니다.</p>
-    
+
     <div class="tags-content-list">
       {renderedPosts.length > 0 ? (
         renderedPosts.map(({ post, Content }) => (
           <article class="tag-explainer">
-            <h2 class="tag-title">#{post.data.title || post.slug}</h2>
+            <h2 class="tag-title">#{post.data.title || post.id}</h2>
             <div class="prose">
               <Content />
             </div>

@@ -8,20 +8,20 @@ const { entry } = Astro.props;
 const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : entry.data.cover;
 ---
 <article class="post-card">
-  <a href={`/blog/${entry.slug || entry.id}`} class="cover-link">
+  <a href={`/blog/${entry.id}`} class="cover-link">
     {coverSrc ? (
       <img src={coverSrc} alt="Cover" class="cover-img" />
     ) : (
       <div class="cover-placeholder"></div>
     )}
   </a>
-  
+
   <div class="post-tags">
     {entry.data.tags.map((tag: string) => ( <a href={`/tags/${tag}`} class="tag">#{tag}</a> ))}
   </div>
-  
+
   <div class="post-content">
-    <h2 class="post-title"><a href={`/blog/${entry.slug || entry.id}`}>{entry.data.title}</a></h2>
+    <h2 class="post-title"><a href={`/blog/${entry.id}`}>{entry.data.title}</a></h2>
     {entry.data.description && <p class="post-desc">{entry.data.description}</p>}
   </div>
 </article>
@@ -32,11 +32,11 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
   .cover-img, .cover-placeholder { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: opacity 0.2s; }
   .cover-placeholder { background: #f0f0f0; }
   .cover-link:hover .cover-img, .cover-link:hover .cover-placeholder { opacity: 0.85; }
-  
+
   .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; background: #111; padding: 0.5rem; margin-top: 0; }
   .post-tags .tag { color: #fff; text-decoration: none; font-size: 0.85rem; }
   .post-tags .tag:hover { text-decoration: underline; }
-  
+
   .post-content { padding: 1.5rem 0; }
   .post-title { margin: 0 0 0.5rem 0; font-size: 1.8rem; }
   .post-title a { color: #111; text-decoration: none; }
