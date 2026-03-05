@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+// 'hej' 타입의 글만 가져와 최신순 정렬
+const allEntries = await getCollection('blog');
+const hejEntries = allEntries
+  .filter(entry => entry.data.type === 'hej')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// 가장 최신 글 1개만 선택
+const latestHej = hejEntries.length > 0 ? hejEntries : null;
+
+let Content = null;
+if (latestHej) {
+  const rendered = await render(latestHej);
+  Content = rendered.Content;
+}
+---
+<BaseLayout title="Hej! | Siku.name">
+  
+  <!-- 중간 높이의 커버 이미지와 오버레이 텍스트 -->
+  <div class="page-hero full-bleed">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" class="hero-bg">
+      <rect width="100%" height="100%" fill="#FFF8E1" />
+      <circle cx="80%" cy="50%" r="150" fill="#FFE082" opacity="0.3"/>
+      <path d="M0,300 L1200,250 L1200,300 Z" fill="#ffffff" opacity="0.5"/>
+    </svg>
+    <div class="hero-content">
+      <h1>Hej!</h1>
+      <p>저에 대한 짧은 소개와 인사말입니다.</p>
+    </div>
+  </div>
+
+  <!-- 680px 본문 컨테이너 -->
+  <div class="hej-container prose">
+    {Content ? (
+      <Content />
+    ) : (
+      <p>아직 작성된 Hej! 소개 글이 없습니다. (type: "hej"로 글을 작성해 보세요!)</p>
+    )}
+  </div>
+
+</BaseLayout>
+
+<style>
+  /* 히어로 영역 (중간 높이) */
+  .page-hero {
+    position: relative;
+    height: 30vh;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+  .hero-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .hero-content h1 {
+    font-size: 3.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #111;
+    letter-spacing: -1px;
+  }
+  .hero-content p {
+    color: #555;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .hej-container {
+    padding-bottom: 2rem;
+  }
+
+  /* ✨ 푸터 블렌딩 마법
+     본문 배경(흰색)이 서브스크라이브 푸터 영역까지 단절 없이 이어지도록
+     첫 번째 푸터 영역(.footer-top)의 회색 배경을 흰색으로 덮어씌웁니다. */
+  :global(.footer-top) {
+    background-color: #fff !important;
+    border-top: none !important;
+  }
+</style>
