@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import MemoCard from '../../components/MemoCard.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+type BlogEntry = CollectionEntry<"blog">;
+
+export async function getStaticPaths() {
+  const allEntries = await getCollection('blog');
+  
+  // 모든 태그 추출 (포스트 + 메모 모두 포함)
+  const allTags = allEntries.flatMap(entry => entry.data.tags || []);
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.map(tag => {
+    // 해당 태그가 포함된 글만 필터링 후 정렬
+    const filteredEntries = allEntries
+      .filter(entry => entry.data.tags?.includes(tag))
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+      
+    return {
+      params: { tag },
+      props: { entries: filteredEntries },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { entries } = Astro.props;
+
+// 10개 단위 페이지네이션 계산
+const POSTS_PER_PAGE = 10;
+const totalPages = Math.ceil(entries.length / POSTS_PER_PAGE) || 1;
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+// 월 단위 그룹화 및 pageNum 주입
+const groupedEntries: { month: string, entries: (BlogEntry & { pageNum: number })[] }[] = [];
+
+entries.forEach((entry, index) => {
+  const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
+  const entryWithPage = Object.assign({}, entry, { pageNum });
+  
+  const dateObj = new Date(entry.data.date);
+  const monthStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+  
+  const lastGroup = groupedEntries[groupedEntries.length - 1];
+  if (!lastGroup || lastGroup.month !== monthStr) {
+    groupedEntries.push({ month: monthStr, entries: [entryWithPage] });
+  } else {
+    lastGroup.entries.push(entryWithPage);
+  }
+});
+
+// 태그 글자를 숫자로 변환하여 3가지 색상(적, 청, 녹) 중 하나로 고정 해시(Hash)
+const hash = tag.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+const colorIndex = hash % 3;
+
+const THEMES = [
+  { bg: "#FFEbee", fg: "#c62828" }, // 0: Red
+  { bg: "#E3F2FD", fg: "#1565c0" }, // 1: Blue
+  { bg: "#E8F5E9", fg: "#2e7d32" }  // 2: Green
+];
+const currentTheme = THEMES[colorIndex];
+---
+<BaseLayout title={`#${tag} | Siku.name`}>
+  
+  <!-- 태그 전용 무작위(고정) SVG 배경 히어로 -->
+  <div class="tag-hero full-bleed" style={`background-color: ${currentTheme.bg};`}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMid slice" class="hero-svg-bg">
+      <circle cx="10%" cy="150" r="100" fill={currentTheme.fg} opacity="0.05" />
+      <circle cx="90%" cy="0" r="150" fill={currentTheme.fg} opacity="0.05" />
+      <path d="M400,150 L600,0 L800,150 Z" fill={currentTheme.fg} opacity="0.03" />
+    </svg>
+    <div class="hero-content">
+      <h1 style={`color: ${currentTheme.fg};`}>#{tag}</h1>
+    </div>
+  </div>
+
+  <div class="tag-main-container">
+    <!-- Posts tagged 영역 및 clear 링크 -->
+    <div class="tag-filter-info">
+      <p>Posts tagged: <strong style={`color: ${currentTheme.fg};`}>{tag}</strong></p>
+      <a href="/" class="clear-link">clear</a>
+    </div>
+
+    <!-- 포스트 리스트 렌더링 (홈 화면과 동일한 그룹화 및 스타일 적용) -->
+    <div class="post-list-container">
+      {groupedEntries.map(group => (
+        <div class="month-group">
+          <aside class="month-sidebar">
+            <span class="sticky-month">{group.month}</span>
+          </aside>
+          
+          <div class="month-content">
+            {group.entries.map((entry) => (
+              <div class="list-item" data-page={entry.pageNum}>
+                <!-- 타입에 따라 일반 포스트 카드와 메모 카드를 조건부로 렌더링 -->
+                {entry.data.type === 'memo' ? (
+                  <MemoCard post={entry} />
+                ) : (
+                  <PostCard entry={entry} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <!-- 하단 페이지네이션 렌더링 -->
+      {totalPages > 1 && (
+        <div class="pagination">
+          {pages.map((page) => (
+            <button class="page-btn" data-target-page={page}>{page}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const pageBtns = document.querySelectorAll('.page-btn');
+  const listItems = document.querySelectorAll('.list-item');
+
+  function showPage(page: number) {
+    listItems.forEach((item) => {
+      const el = item as HTMLElement;
+      el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
+    });
+    
+    pageBtns.forEach(btn => {
+      if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    document.querySelectorAll('.month-group').forEach(group => {
+      const visibleItems = group.querySelectorAll('.list-item[style="display: block;"]');
+      (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
+    });
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  pageBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = parseInt((e.currentTarget as HTMLElement).getAttribute('data-target-page') || '1');
+      showPage(target);
+    });
+  });
+
+  if (pageBtns.length > 0) showPage(1);
+</script>
+
+<style>
+  /* 태그 전용 중간 높이(약 3cm) 히어로 영역 */
+  .tag-hero {
+    position: relative;
+    height: 15vh;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .hero-svg-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  .hero-content h1 {
+    font-size: 3rem;
+    margin: 0;
+    letter-spacing: -1px;
+  }
+
+  .tag-main-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* 필터 안내 및 clear 링크 */
+  .tag-filter-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #111;
+  }
+  .tag-filter-info p {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #555;
+  }
+  .tag-filter-info strong {
+    font-size: 1.4rem;
+  }
+  .clear-link {
+    color: #111;
+    font-weight: bold;
+    text-decoration: underline;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+  }
+  .clear-link:hover {
+    color: #D4AF37;
+  }
+
+  /* 홈 화면과 동일한 목록 레이아웃 */
+  .month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .month-sidebar { flex: 0 0 100px; }
+  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
+  .month-content { flex: 1; display: flex; flex-direction: column; width: 100%; }
+  
+  .list-item { width: 100%; }
+
+  .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
+  .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
+  .page-btn:hover { background: #f5f5f5; color: #111; }
+  .page-btn.active { background: #111; color: #fff; border-color: #111; }
+</style>
