@@ -1,21 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PagefindSearch from 'astro-pagefind/components/Search';
 ---
 <BaseLayout title="Search | Siku.name">
   <div class="search-page-container">
-    <!-- 검색창 (900px 꽉 채움) -->
-    <form action="/search/" method="get" class="search-form-large">
-      <input type="text" name="q" id="search-input" placeholder="Type keyword..." required />
-      <button type="submit">Search</button>
-    </form>
-    
-    <!-- 홈으로 돌아가기 링크 -->
     <a href="/" class="back-link">&lt; back to index</a>
 
-    <!-- 검색 결과가 뿌려질 컨테이너 -->
-    <div id="search-results" class="results-container">
-      <!-- 자바스크립트가 여기에 결과를 채워 넣습니다 -->
-    </div>
+    <!-- 서버 사이드 query={} 속성을 지우고 기본 설정만 남깁니다 -->
+    <PagefindSearch
+      id="search"
+      className="custom-pagefind"
+      uiOptions={{ showImages: false }}
+    />
   </div>
 </BaseLayout>
 
@@ -27,34 +23,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: 0 20px;
     min-height: 60vh;
   }
-
-  /* 큼직한 에디토리얼 검색창 */
-  .search-form-large {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .search-form-large input {
-    flex: 1;
-    padding: 1.2rem;
-    border: 2px solid #111;
-    font-size: 1.2rem;
-  }
-  .search-form-large button {
-    padding: 0 2.5rem;
-    background: #111;
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.1rem;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .search-form-large button:hover {
-    background: #D4AF37;
-    color: #111;
-  }
-
   .back-link {
     color: #555;
     text-decoration: underline;
@@ -62,121 +30,59 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 1rem;
     transition: color 0.2s;
     display: inline-block;
-    margin-bottom: 5rem;
+    margin-bottom: 2rem;
   }
   .back-link:hover { color: #111; }
 
-  /* 💎 검색 결과 아이템 디자인 (왼쪽 날짜, 오른쪽 내용) */
-  :global(.result-item) {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 3rem;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 3rem;
+  /* 공식 Pagefind UI를 에디토리얼 레이아웃으로 덮어씌우는 CSS */
+  :global(.custom-pagefind .pagefind-ui__search-input) {
+    width: 100%;
+    padding: 1.2rem;
+    border: 2px solid #111 !important;
+    font-size: 1.2rem;
+    background-color: #fff;
+    border-radius: 0;
   }
-  :global(.result-date) {
-    flex: 0 0 120px;
-    font-family: monospace;
-    color: #888;
-    font-size: 1.1rem;
-    font-weight: bold;
+  :global(.custom-pagefind .pagefind-ui__search-clear) { padding: 0 1rem; }
+  :global(.custom-pagefind .pagefind-ui__results-area) { margin-top: 3rem; }
+  :global(.custom-pagefind .pagefind-ui__result) {
+    border-bottom: 1px solid #eaeaea !important;
+    padding-bottom: 3rem !important;
+    margin-bottom: 3rem !important;
+    border-top: none !important;
+    padding-top: 0 !important;
   }
-  :global(.result-content) {
-    flex: 1;
-  }
-  :global(.result-title) {
-    margin: 0 0 0.8rem 0;
-    font-size: 1.8rem;
-  }
-  :global(.result-title a) {
-    color: #111;
-    text-decoration: none;
-  }
-  :global(.result-title a:hover) {
-    color: #D4AF37;
-  }
-  :global(.result-excerpt) {
-    color: #555;
-    line-height: 1.6;
-    font-size: 1.05rem;
-    margin: 0;
-  }
-  
-  /* ✨ 요구사항: 검색된 키워드(mark)에 언더라인 강조 적용 */
-  :global(.result-excerpt mark) {
-    background: transparent;
-    color: #111;
-    font-weight: 900;
-    border-bottom: 2px solid #111;
-  }
-
-  @media (max-width: 600px) {
-    :global(.result-item) { flex-direction: column; gap: 0.5rem; }
-    :global(.result-date) { font-size: 0.9rem; }
+  :global(.custom-pagefind .pagefind-ui__result-title) { margin: 0 0 0.8rem 0; font-size: 1.8rem; font-weight: bold; }
+  :global(.custom-pagefind .pagefind-ui__result-title .pagefind-ui__result-link) { color: #111; text-decoration: none; }
+  :global(.custom-pagefind .pagefind-ui__result-title .pagefind-ui__result-link:hover) { color: #D4AF37; }
+  :global(.custom-pagefind .pagefind-ui__result-excerpt) { color: #555; line-height: 1.6; font-size: 1.05rem; margin: 0; }
+  :global(.custom-pagefind .pagefind-ui__result-excerpt mark) {
+    background: transparent !important;
+    color: #111 !important;
+    font-weight: 900 !important;
+    border-bottom: 2px solid #111 !important;
   }
 </style>
 
+<!-- ✨ 핵심 추가: 클라이언트 사이드 자동 검색 스크립트 -->
 <script>
-  async function initSearch() {
+  window.addEventListener('DOMContentLoaded', () => {
     // 1. 주소창에서 ?q=검색어 값을 가져옵니다.
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q');
-    const input = document.getElementById('search-input') as HTMLInputElement;
-    const resultsContainer = document.getElementById('search-results');
 
-    if (!query) {
-      if (resultsContainer) resultsContainer.innerHTML = '<p style="color: #888;">검색어를 입력해 주세요.</p>';
-      return;
-    }
+    if (query) {
+      // 2. Pagefind 검색창이 화면에 렌더링될 때까지 0.1초마다 확인합니다.
+      const checkExist = setInterval(() => {
+        const input = document.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
+        if (input) {
+          clearInterval(checkExist); // 창을 찾으면 반복 확인 종료
 
-    // 2. 검색창에 사용자가 검색한 단어를 그대로 남겨둡니다.
-    if (input) input.value = query;
-    if (resultsContainer) resultsContainer.innerHTML = '<p>검색 중...</p>';
-
-    try {
-      // 3. Pagefind 엔진을 동적으로 불러와서 검색을 실행합니다.
-      // @ts-ignore
-      const pagefind = await import('/pagefind/pagefind.js');
-      // 요약본(excerpt) 길이를 3줄 정도에 맞게 세팅합니다.
-      await pagefind.options({ excerptLength: 30 });
-      const search = await pagefind.search(query);
-
-      if (search.results.length === 0) {
-        if (resultsContainer) resultsContainer.innerHTML = `<p style="font-size: 1.2rem; color: #555;">'<strong>${query}</strong>'에 대한 검색 결과가 없습니다.</p>`;
-        return;
-      }
-
-      // 4. 검색 결과를 HTML 레이아웃에 맞춰 조립합니다.
-      let html = '';
-      for (const result of search.results) {
-        const data = await result.data();
-        
-        // 날짜 포맷 (Pagefind가 날짜를 못 찾았을 경우 대비 fallback 포함)
-        const rawDate = data.meta?.date;
-        let formattedDate = "-";
-        if (rawDate) {
-          const d = new Date(rawDate);
-          const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          formattedDate = `${String(d.getDate()).padStart(2, '0')}.${monthNames[d.getMonth()]}.${d.getFullYear()}`;
+          // 3. 검색창에 단어를 넣고, 사람이 직접 타이핑한 것처럼 이벤트를 발생시킵니다!
+          input.value = query;
+          input.dispatchEvent(new Event('input', { bubbles: true }));
         }
-
-        html += `
-          <article class="result-item">
-            <div class="result-date">${formattedDate}</div>
-            <div class="result-content">
-              <h2 class="result-title"><a href="${data.url}">${data.meta.title || 'Untitled'}</a></h2>
-              <p class="result-excerpt">${data.excerpt}</p>
-            </div>
-          </article>
-        `;
-      }
-      if (resultsContainer) resultsContainer.innerHTML = html;
-
-    } catch (error) {
-      console.error(error);
-      if (resultsContainer) resultsContainer.innerHTML = '<p style="color: red;">검색 엔진을 불러오는 데 실패했습니다. (※ 터미널에서 npm run build를 먼저 실행해야 검색 DB가 생성됩니다!)</p>';
+      }, 100);
     }
-  }
-
-  initSearch();
+  });
 </script>
