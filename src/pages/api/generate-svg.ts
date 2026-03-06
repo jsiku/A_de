@@ -7,7 +7,6 @@ export async function POST({ request, locals }: APIContext) {
     const body = await request.json();
     const textInput = body.text;
     const apiKey = (locals as any).runtime.env.GEMINI_API_KEY;
-    console.log("API KEY:", apiKey);
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "서버에 API Key가 설정되지 않았습니다." }),
