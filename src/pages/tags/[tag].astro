@@ -9,7 +9,7 @@ type BlogEntry = CollectionEntry<"blog">;
 
 export async function getStaticPaths() {
   const allEntries = await getCollection('blog');
-  
+
   // 모든 태그 추출 (포스트 + 메모 모두 포함)
   const allTags = allEntries.flatMap(entry => entry.data.tags || []);
   const uniqueTags = [...new Set(allTags)];
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
     const filteredEntries = allEntries
       .filter(entry => entry.data.tags?.includes(tag))
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-      
+
     return {
       params: { tag },
       props: { entries: filteredEntries },
@@ -41,10 +41,10 @@ const groupedEntries: { month: string, entries: (BlogEntry & { pageNum: number }
 entries.forEach((entry, index) => {
   const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
   const entryWithPage = Object.assign({}, entry, { pageNum });
-  
+
   const dateObj = new Date(entry.data.date);
   const monthStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-  
+
   const lastGroup = groupedEntries[groupedEntries.length - 1];
   if (!lastGroup || lastGroup.month !== monthStr) {
     groupedEntries.push({ month: monthStr, entries: [entryWithPage] });
@@ -65,9 +65,9 @@ const THEMES = [
 const currentTheme = THEMES[colorIndex];
 ---
 <BaseLayout title={`#${tag} | Siku.name`}>
-  
+
   <!-- 태그 전용 무작위(고정) SVG 배경 히어로 -->
-  <div class="tag-hero full-bleed" style={`background-color: ${currentTheme.bg};`}>
+  <div class="tag-hero" style={`background-color: ${currentTheme.bg};`}>
     <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 150" preserveAspectRatio="xMidYMid slice" class="hero-svg-bg">
       <circle cx="10%" cy="150" r="100" fill={currentTheme.fg} opacity="0.05" />
       <circle cx="90%" cy="0" r="150" fill={currentTheme.fg} opacity="0.05" />
@@ -92,7 +92,7 @@ const currentTheme = THEMES[colorIndex];
           <aside class="month-sidebar">
             <span class="sticky-month">{group.month}</span>
           </aside>
-          
+
           <div class="month-content">
             {group.entries.map((entry) => (
               <div class="list-item" data-page={entry.pageNum}>
@@ -129,7 +129,7 @@ const currentTheme = THEMES[colorIndex];
       const el = item as HTMLElement;
       el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
     });
-    
+
     pageBtns.forEach(btn => {
       if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
         btn.classList.add('active');
@@ -142,7 +142,7 @@ const currentTheme = THEMES[colorIndex];
       const visibleItems = group.querySelectorAll('.list-item[style="display: block;"]');
       (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
     });
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -223,7 +223,7 @@ const currentTheme = THEMES[colorIndex];
   .month-sidebar { flex: 0 0 100px; }
   .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
   .month-content { flex: 1; display: flex; flex-direction: column; width: 100%; }
-  
+
   .list-item { width: 100%; }
 
   .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }

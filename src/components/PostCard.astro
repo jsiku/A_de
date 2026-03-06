@@ -6,15 +6,16 @@ const { entry } = Astro.props;
 
 // 이미지 객체(.src) 처리 안전장치
 const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : entry.data.cover;
+
 ---
 <article class="post-card">
-  <a href={`/blog/${entry.id}`} class="cover-link">
-    {coverSrc ? (
-      <img src={coverSrc} alt="Cover" class="cover-img" />
-    ) : (
-      <div class="cover-placeholder"></div>
-    )}
-  </a>
+    <a href={`/blog/${entry.id}`} class="cover-link">
+      {entry.data.cover ? (
+        <img src={entry.data.cover.src} alt="Cover" class="cover-img" />
+      ) : (
+        <div class="cover-placeholder"></div>
+      )}
+    </a>
 
   <div class="post-tags">
     {entry.data.tags.map((tag: string) => ( <a href={`/tags/${tag}`} class="tag">#{tag}</a> ))}

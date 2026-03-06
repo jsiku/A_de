@@ -2,9 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 <BaseLayout title="Minis | Siku.name">
-  
+
   <!-- 중간 높이의 커버 이미지와 오버레이 텍스트 -->
-  <div class="page-hero full-bleed">
+  <div class="page-hero">
     <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" class="hero-bg">
       <rect width="100%" height="100%" fill="#F0F4F8" />
       <path d="M0,150 Q300,50 600,150 T1200,150 L1200,300 L0,300 Z" fill="#E1E8ED" opacity="0.6"/>
@@ -17,7 +17,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </div>
 
   <!-- TOC 메뉴바 (스크롤 시 상단 고정) -->
-  <div class="minis-toc full-bleed">
+  <div class="minis-toc">
     <div class="toc-inner">
       <a href="#svg-generator">🎨 SVG 생성기</a>
       <a href="#youtube-cut">✂️ 유튜브 컷 (준비 중)</a>
@@ -26,18 +26,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <!-- 900px 본문 컨테이너 -->
   <div class="minis-container">
-    
+
     <!-- 첫 번째 도구: SVG 생성기 -->
     <section id="svg-generator" class="tool-section">
       <div class="tool-header">
         <h2>🎨 추상 SVG 생성기</h2>
         <p>어떤 텍스트든 입력하면 Gemini가 느낌을 파악해 현대적인 SVG 아트로 그려줍니다.</p>
       </div>
-      
+
       <div class="tool-body">
         <textarea id="svg-input" rows="3" placeholder="예: 비 내리는 밤의 고양이, 기하학적인 우주 등 어떤 글이든 입력하세요."></textarea>
         <button id="svg-btn" class="action-btn">이미지 생성하기</button>
-        
+
         <div id="svg-result-container" class="result-box" style="display: none;">
           <div id="svg-output"></div>
           <!-- 그림이 생성되면 나타나는 복사 버튼 -->
@@ -56,7 +56,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2>✂️ 유튜브 컷</h2>
         <p>유튜브 링크를 통해 필요한 구간을 컷팅합니다. (기능 연결 대기 중)</p>
       </div>
-      
+
       <div class="tool-body">
         <input type="text" class="dummy-input" placeholder="유튜브 URL을 입력하세요..." disabled />
         <button class="action-btn disabled">구간 설정하기</button>
@@ -101,7 +101,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text })
         });
-        
+
         const data = await res.json();
 
         if (!res.ok) {
@@ -204,7 +204,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .tool-header { margin-bottom: 2rem; }
   .tool-header h2 { font-size: 2rem; margin: 0 0 0.5rem 0; }
   .tool-header p { color: #666; margin: 0; }
-  
+
   .tool-body {
     background: #f9f9f9;
     border: 1px solid #eaeaea;
@@ -226,7 +226,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     resize: vertical;
   }
   .dummy-input { background: #eee; cursor: not-allowed; }
-  
+
   .action-btn {
     align-self: flex-start;
     background: #111;

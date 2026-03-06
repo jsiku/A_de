@@ -36,15 +36,6 @@ const { title, hideEmailFooter = false } = Astro.props;
     overflow-x: clip;
   }
 
-  /* ✨ 2번 문제 해결: 어떤 컨테이너 안에 있더라도 브라우저 좌우 끝까지 100vw로 뻗어나가는 마법의 클래스 */
-  .full-bleed {
-    width: 100vw !important;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw !important;
-    margin-right: -50vw !important;
-  }
 
   /* 본문 중앙 정렬용 기본 클래스 (Hej 페이지 등의 680px 폭 유지) */
   .prose {

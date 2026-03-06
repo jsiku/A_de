@@ -23,8 +23,6 @@ export async function getStaticPaths() {
 const { post, prevPost, nextPost } = Astro.props;
 const { Content } = await render(post);
 
-// 이미지 객체(.src) 추출 안전장치
-const coverSrc = typeof post.data.cover === 'object' ? post.data.cover?.src : post.data.cover;
 
 // 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
 const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-/g, '.');
@@ -44,14 +42,16 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   </div>
 
   <!-- 커버 이미지 영역: 화면을 좌우 꽉 채우고 고정 (패럴랙스) -->
-  {coverSrc && (
-    <div class="fixed-cover-container" id="coverContainer">
-      <img src={coverSrc} alt="Cover Image" class="full-bleed-cover" />
+  {post.data.cover && (
+    <div id="fade-cover" class="fixed-cover-container">
+      <!-- ✨ 여기서도 || 구문을 삭제하고 엄격하게 문자열인 .src만 넘겨줍니다 -->
+      <img src={post.data.cover.src} alt="Cover" class="full-bleed-cover" />
     </div>
   )}
 
+
   <!-- 본문 영역: 이미지 밑에 있다가 위로 덮으며 올라옴 -->
-  <article class={`post-content-wrapper ${!coverSrc ? 'no-cover' : ''}`}>
+  <article class={`post-content-wrapper ${!post.data.cover ? 'no-cover' : ''}`}>
      <div class="post-header prose">
         <h1 class="post-main-title">{post.data.title}</h1>
         <div class="post-meta">
