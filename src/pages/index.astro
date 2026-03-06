@@ -28,10 +28,10 @@ const groupedEntries: { month: string, entries: (BlogEntry & { pageNum: number }
 sortedEntries.forEach((entry, index) => {
   const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
   const entryWithPage = Object.assign({}, entry, { pageNum });
-  
+
   const dateObj = new Date(entry.data.date);
   const monthStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
-  
+
   const lastGroup = groupedEntries[groupedEntries.length - 1];
   if (!lastGroup || lastGroup.month !== monthStr) {
     groupedEntries.push({ month: monthStr, entries: [entryWithPage] });
@@ -42,14 +42,14 @@ sortedEntries.forEach((entry, index) => {
 ---
 <BaseLayout title="Siku.name">
   <Hero uniqueTags={uniqueTags} />
-  
+
   <div class="post-list-container">
     {groupedEntries.map(group => (
       <div class="month-group">
         <aside class="month-sidebar">
           <span class="sticky-month">{group.month}</span>
         </aside>
-        
+
         <div class="month-content">
           {group.entries.map(entry => (
             <div class="post-item" data-page={entry.pageNum}>
@@ -80,7 +80,7 @@ sortedEntries.forEach((entry, index) => {
       const el = item as HTMLElement;
       el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
     });
-    
+
     pageBtns.forEach(btn => {
       if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
         btn.classList.add('active');
@@ -93,7 +93,7 @@ sortedEntries.forEach((entry, index) => {
       const visibleItems = group.querySelectorAll('.post-item[style="display: block;"]');
       (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
     });
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -111,11 +111,32 @@ sortedEntries.forEach((entry, index) => {
   .post-list-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
   .month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
   .month-sidebar { flex: 0 0 100px; }
-  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
+  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #e9c362; }
   .month-content { flex: 1; display: flex; flex-direction: column; }
-  
+
   .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
   .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
   .page-btn:hover { background: #f5f5f5; color: #111; }
   .page-btn.active { background: #111; color: #fff; border-color: #111; }
+
+
+
+
+  /* 모바일 뷰 (화면 폭이 768px 이하일 때 적용) */
+@media (max-width: 768px) {
+  .month-group {
+    display: flex;
+    flex-direction: column; /* 좌우 배치를 상하(위아래) 배치로 변경 */
+    gap: 1rem; /* 날짜와 첫 번째 카드 사이의 여백 */
+    margin-bottom: 2rem;
+  }
+  .month-sidebar {
+    width: 100%; /* 왼쪽 한구석이 아니라 모바일 화면 전체 너비를 쓰도록 풀기 */
+    margin-bottom: 0.5rem;
+    flex: 0 0 10px;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    border-bottom-color: #e9c362;
+  }
+}
 </style>

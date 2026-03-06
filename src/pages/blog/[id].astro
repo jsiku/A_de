@@ -5,17 +5,33 @@ import { getCollection, render } from 'astro:content';
 export async function getStaticPaths() {
   const allEntries = await getCollection('blog');
 
-  // 이전/다음 글 링크를 위해 memo를 제외한 포스트만 필터링 후 날짜순 정렬
-  const posts = allEntries.filter(p => p.data.type !== 'memo').sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  // 1. 모든 글(메모 포함)을 날짜순으로 정렬합니다.
+  const sortedAll = allEntries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-  return posts.map((post, index) => {
+  // 2. 하단 이전/다음(older/newer) 링크 계산을 위해 일반 포스트만 따로 추려냅니다.
+  const postsOnly = sortedAll.filter(p => p.data.type !== 'memo');
+
+  // 3. 메모를 포함한 '모든 글'에 대해 고유 페이지 경로를 생성합니다.
+  return sortedAll.map((post) => {
+    let prevPost = null;
+    let nextPost = null;
+
+    // 현재 페이지가 일반 'post'일 때만 이전/다음 글 링크를 계산하여 연결합니다.
+    if (post.data.type !== 'memo') {
+      const index = postsOnly.findIndex(p => p.id === post.id);
+      if (index !== -1) {
+        prevPost = index + 1 < postsOnly.length ? postsOnly[index + 1] : null;
+        nextPost = index - 1 >= 0 ? postsOnly[index - 1] : null;
+      }
+    }
+
     return {
-      params: { id: post.id },
+      params: { id: post.id }, // 여기서 메모도 자신만의 고유 주소를 얻게 됩니다!
       props: {
         post,
-        prevPost: index + 1 < posts.length ? posts[index + 1] : null,
-        nextPost: index - 1 >= 0 ? posts[index - 1] : null,
-      }
+        prevPost,
+        nextPost,
+      },
     };
   });
 }
@@ -30,16 +46,18 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
 <BaseLayout title={`${post.data.title || 'Post'} | Siku.name`}>
 
   <!-- 포스트 전용 고정 메뉴바 (겨자색 톤 적용) -->
-  <div class="post-navbar" id="postNavbar">
-    <div class="post-navbar-inner">
-      <a href={prevPost ? `/blog/${prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
-      <div class="center-menu">
-        <a href="/" class="index-btn">▲ Index</a>
-        <span class="reading-title">Reading: {post.data.title}</span>
+  {post.data.type !== 'memo' && (
+    <div class="post-navbar" id="postNavbar">
+      <div class="post-navbar-inner">
+        <a href={prevPost ? `/blog/${prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
+        <div class="center-menu">
+          <a href="/" class="index-btn">▲ Index</a>
+          <span class="reading-title">Reading: {post.data.title}</span>
+        </div>
+        <a href={nextPost ? `/blog/${nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
       </div>
-      <a href={nextPost ? `/blog/${nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
     </div>
-  </div>
+  )}
 
   <!-- 커버 이미지 영역: 화면을 좌우 꽉 채우고 고정 (패럴랙스) -->
   {post.data.cover && (
@@ -51,7 +69,7 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
 
 
   <!-- 본문 영역: 이미지 밑에 있다가 위로 덮으며 올라옴 -->
-  <article class={`post-content-wrapper ${!post.data.cover ? 'no-cover' : ''}`}>
+  <article class={`post-content-wrapper ${!post.data.cover ? 'no-cover' : ''}`} data-pagefind-body>
      <div class="post-header prose">
         <h1 class="post-main-title">{post.data.title}</h1>
         <div class="post-meta">

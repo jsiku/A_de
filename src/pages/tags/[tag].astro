@@ -89,8 +89,8 @@ const currentTheme = THEMES[colorIndex];
     <div class="post-list-container">
       {groupedEntries.map(group => (
         <div class="month-group">
-          <aside class="month-sidebar">
-            <span class="sticky-month">{group.month}</span>
+          <aside class="month-sidebar" style={`border-bottom-color: ${currentTheme.fg};`}>
+            <span class="sticky-month" style={`color: ${currentTheme.fg};`}>{group.month}</span>
           </aside>
 
           <div class="month-content">
@@ -157,6 +157,7 @@ const currentTheme = THEMES[colorIndex];
 </script>
 
 <style>
+
   /* 태그 전용 중간 높이(약 3cm) 히어로 영역 */
   .tag-hero {
     position: relative;
@@ -195,10 +196,17 @@ const currentTheme = THEMES[colorIndex];
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4rem;
+
+    padding-top: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #111;
-  }
+    margin-bottom: 2.2rem;
+
+    position: sticky;
+    top: 67px; /* 메인 헤더 높이에 따라 조절 */
+    z-index: 100;
+
+    background: rgba(255, 255, 255, 0.95);
+    }
   .tag-filter-info p {
     font-size: 1.2rem;
     margin: 0;
@@ -221,7 +229,7 @@ const currentTheme = THEMES[colorIndex];
   /* 홈 화면과 동일한 목록 레이아웃 */
   .month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
   .month-sidebar { flex: 0 0 100px; }
-  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
+  .sticky-month { position: sticky; top: 130px; font-size: 1.2rem; font-weight: 800;}
   .month-content { flex: 1; display: flex; flex-direction: column; width: 100%; }
 
   .list-item { width: 100%; }
@@ -230,4 +238,23 @@ const currentTheme = THEMES[colorIndex];
   .page-btn { background: none; border: 1px solid #ddd; padding: 0.5rem 1rem; cursor: pointer; font-size: 1rem; color: #555; border-radius: 4px; transition: all 0.2s; }
   .page-btn:hover { background: #f5f5f5; color: #111; }
   .page-btn.active { background: #111; color: #fff; border-color: #111; }
+@media (max-width: 768px) {
+  .month-group {
+    display: flex;
+    flex-direction: column; /* 좌우 배치를 상하(위아래) 배치로 변경 */
+    gap: 1rem; /* 날짜와 첫 번째 카드 사이의 여백 */
+    margin-bottom: 2rem;
+  }
+  .month-sidebar {
+    width: 100%; /* 왼쪽 한구석이 아니라 모바일 화면 전체 너비를 쓰도록 풀기 */
+    margin-bottom: 0.5rem;
+    flex: 0 0 10px;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+  }
+   .tag-filter-info {
+    margin-bottom: 2rem;
+    border-bottom: 0px;
+  }
+}
 </style>
