@@ -9,51 +9,47 @@ interface Props {
 
 const { title, hideEmailFooter = false } = Astro.props;
 ---
+<!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{title}</title>
-  <style is:global>
-    /* 리셋 및 기본 폰트 */
-    *, *::before, *::after { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #fff; color: #111; line-height: 1.6; }
-    
-    /* 전체 컨테이너는 무조건 가운데 900px */
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
 
-    /* 본문 브레이크아웃(Breakout) 레이아웃 마법 */
-    .prose {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-    
-    /* 글 쓰는 영역은 가운데 680px로 모아줌 */
-    .prose > * {
-      width: 100%;
-      max-width: 680px;
-    }
-    
-    /* 이미지가 들어갈 경우 900px(부모 너비)에 꽉 차게 확장 */
-    .prose > img, .prose > svg, .full-bleed {
-      max-width: 900px !important;
-      width: 100%;
-      height: auto;
-      margin: 2rem 0;
-    }
-  </style>
-</head>
-<body>
-  <Header />
-  <main>
-    <slot />
-  </main>
-  <Footer hideEmailFooter={hideEmailFooter} />
-</body>
+    <main>
+      <slot />
+    </main>
+
+    <Footer hideEmailFooter={hideEmailFooter} />
+  </body>
 </html>
+
+<style is:global>
+  /* ✨ 1번 문제 해결: 헤더와 이미지 사이의 불필요한 간격 및 브라우저 기본 여백 완벽 제거 */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  /* ✨ 2번 문제 해결: 어떤 컨테이너 안에 있더라도 브라우저 좌우 끝까지 100vw로 뻗어나가는 마법의 클래스 */
+  .full-bleed {
+    width: 100vw !important;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+  }
+
+  /* 본문 중앙 정렬용 기본 클래스 (Hej 페이지 등의 680px 폭 유지) */
+  .prose {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+</style>
