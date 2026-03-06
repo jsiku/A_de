@@ -2,12 +2,11 @@ import type { APIContext } from "astro";
 
 export const prerender = false; // 빌드 시 정적 파일로 굽지 않고 서버에서 실행
 
-export async function POST({ request }: APIContext) {
+export async function POST({ request, locals }: APIContext) {
   try {
     const body = await request.json();
     const textInput = body.text;
-    const apiKey = import.meta.env.GEMINI_API_KEY;
-
+    const apiKey = (locals as any).runtime.env.GEMINI_API_KEY;
     if (!apiKey) {
       return new Response(
         JSON.stringify({ error: "서버에 API Key가 설정되지 않았습니다." }),
