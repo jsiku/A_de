@@ -36,9 +36,9 @@ sortedMemos.forEach((entry, index) => {
   }
 });
 ---
-<BaseLayout title="Notes | Siku.name">
+<BaseLayout title="Memos | Siku.name">
 
-  <!-- Notes 전용 상단 히어로 (좌우 100vw 꽉참) -->
+  <!-- Memos 전용 상단 히어로 (좌우 100vw 꽉참) -->
   <div class="page-hero full-bleed">
     <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice" class="hero-bg">
       <rect width="100%" height="100%" fill="#F0C0F8" />
@@ -46,8 +46,8 @@ sortedMemos.forEach((entry, index) => {
       <circle cx="900" cy="100" r="40" fill="#D4AF37" opacity="0.2"/>
     </svg>
     <div class="hero-content">
-      <h1>Notes</h1>
-      <p>짧은 생각, 스니펫, 그리고 일상의 파편들</p>
+      <h1>Memos</h1>
+      <p>짧은 생각, 그리고 일상의 파편</p>
     </div>
   </div>
 
@@ -147,14 +147,21 @@ sortedMemos.forEach((entry, index) => {
 
   /* 본문 영역 (가운데 정렬) */
   .content-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 20px;
   }
 
+     /*.month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .month-sidebar { flex: 0 0 100px; }
+  .sticky-month { position: sticky; top: 100px; font-size: 1rem; font-weight: 800; color: #111; }
+  .month-content { flex: 1; display: flex; flex-direction: column; }*/
+
+
+
   .date-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
   .date-sidebar { flex: 0 0 100px; }
-  .sticky-date { position: sticky; top: 100px; font-size: 1rem; font-family: monospace; font-weight: 800; color: #111; }
+  .sticky-date { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #111; }
   .date-content { flex: 1; display: flex; flex-direction: column; }
 
   .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
