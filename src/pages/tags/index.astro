@@ -66,4 +66,14 @@ const renderedPosts = await Promise.all(
     border-top: 1px dashed #ccc;
     margin-top: 4rem;
   }
+        .prose :global(img) {
+    width: 900px !important;             /* prose의 기본 너비 제한을 강제로 뚫음 */
+    max-width: 100vw !important;         /* 모바일에서는 화면 폭에 맞춤 */
+    position: relative !important;
+    left: 50% !important;                /* 부모(680px)의 중앙으로 왼쪽 끝을 밀어냄 */
+    transform: translateX(-50%) !important; /* 이미지 폭의 절반만큼 다시 당겨서 완벽한 중앙 정렬 */
+    display: block !important;
+    margin-top: 3rem !important;         /* 이미지 위아래 여백 */
+    margin-bottom: 3rem !important;
+      }
 </style>

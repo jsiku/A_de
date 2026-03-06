@@ -29,13 +29,38 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 
 <style>
   .post-card { display: flex; flex-direction: column; width: 100%; margin-bottom: 3rem; }
-  .cover-link { display: block; width: 100%; text-decoration: none; }
+  .cover-link { display: block; width: 100%; text-decoration: none;}
   .cover-img, .cover-placeholder { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: opacity 0.2s; }
   .cover-placeholder { background: #f0f0f0; }
   .cover-link:hover .cover-img, .cover-link:hover .cover-placeholder { opacity: 0.85; }
 
-  .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; background: #111; padding: 0.5rem; margin-top: 0; }
-  .post-tags .tag { color: #fff; text-decoration: none; font-size: 0.85rem; }
+  /*.post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; background: #111; padding: 0.5rem; margin-top: 0; }
+  .post-tags .tag { color: #fff; text-decoration: none; font-size: 0.85rem; }*/
+
+ .post-tags {
+    display: flex;
+    justify-content: flex-end; /* ✨ 태그들을 오른쪽 끝으로 밀어냅니다 */
+    flex-wrap: wrap;           /* 태그가 많으면 자연스럽게 줄바꿈 */
+    gap: 0.5rem;               /* 태그들 사이의 간격 */
+    margin: 0;
+    padding: 0;         /* 위아래 여백을 살짝 주어 답답하지 않게 함 */
+    background: transparent !important; /* ✨ 전체 폭을 덮던 둔탁한 검은 띠 제거 */
+  }
+  .post-tags .tag {
+    display: inline-block;
+    background-color: #ccc;    /* ✨ 텍스트 영역에만 타이트하게 검은 배경 적용 */
+    color: #666;
+    padding: 0.2rem 0.6rem;    /* 콤팩트한 여백 */
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 0;          /* 태그 역시 각진 디자인 유지 */
+    transition: all 0.2s ease;
+  }
+
+
+
+
   .post-tags .tag:hover { text-decoration: underline; }
 
   .post-content { padding: 1.5rem 0; }

@@ -11,4 +11,9 @@ export default defineConfig({
   }),
   // ✨ 2. integrations 배열 안에 pagefind()를 추가합니다.
   integrations: [pagefind()],
+  vite: {
+    ssr: {
+      external: ["node:path/posix"],
+    },
+  },
 });

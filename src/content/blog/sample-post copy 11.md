@@ -19,6 +19,6 @@ cover: "../../assets/covers/sample-cover.svg"
 
 텍스트는 `BaseLayout`에 설정한 대로 중앙 `680px` 폭 안에서 예쁘게 정렬되어야 합니다. 하지만 글 중간에 들어가는 아래의 이미지는 `900px` 폭까지 뻗어나가서 시원한 에디토리얼 느낌을 주어야 합니다.
 
-![브레이크아웃 테스트용 이미지 (900px)](https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=900&auto=format&fit=crop)
+![브레이크아웃 테스트용 이미지 (900px)](https://images.unsplash.com/photo-1555680202-c86f0e12f086?)
 
 모든 동작이 완벽하다면 성공입니다!
