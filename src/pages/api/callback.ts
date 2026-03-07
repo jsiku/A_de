@@ -1,5 +1,7 @@
 import type { APIRoute } from "astro";
 
+export const prerender = false; // ✨ 여기도 마찬가지로 추가합니다!
+
 export const GET: APIRoute = async ({ request, locals }) => {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
