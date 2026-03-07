@@ -1,14 +1,43 @@
 import type { APIContext } from "astro";
 
+const rateLimit = new Map<string, number[]>();
+
 export const prerender = false; // 빌드 시 정적 파일로 굽지 않고 서버에서 실행
 
 export async function POST({ request, locals }: APIContext) {
+  // IP 가져오기 (Cloudflare 환경에서는 "CF-Connecting-IP" 헤더 사용, 없으면 "unknown"으로 처리)
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+
+  const now = Date.now();
+  const windowMs = 60000; // 1분
+  const maxRequests = 2;
+
+  const requests = rateLimit.get(ip) || [];
+  const recent = requests.filter((t) => now - t < windowMs);
+
+  if (recent.length >= maxRequests) {
+    return new Response(
+      JSON.stringify({ error: "Too many requests. Please wait." }),
+      { status: 429 },
+    );
+  }
+
+  recent.push(now);
+  rateLimit.set(ip, recent);
+  // IP 기반 간단한 레이트 리밋 적용 (1분에 2회로 제한)
+
   try {
     const body = await request.json();
     const textInput = body.text;
 
     // Turnstile 토큰이 없는 경우 바로 에러 반환
     const token = body.token;
+
+    if (!token) {
+      return new Response(JSON.stringify({ error: "Captcha token missing" }), {
+        status: 400,
+      });
+    }
 
     const apiKey = (locals as any).runtime.env.GEMINI_API_KEY;
     if (!apiKey) {
