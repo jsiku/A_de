@@ -46,7 +46,7 @@ sortedEntries.forEach((entry, index) => {
 
   const targetDate = entry.data.updated || entry.data.date;
   const dateObj = new Date(targetDate);
-  const monthStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+  const monthStr = `${dateObj.toLocaleString('en-US', { month: 'short' })} ${dateObj.getFullYear()}`;
 
   const lastGroup = groupedEntries[groupedEntries.length - 1];
   if (!lastGroup || lastGroup.month !== monthStr) {
