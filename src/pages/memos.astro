@@ -40,7 +40,8 @@ sortedMemos.forEach((entry, index) => {
   const entryWithPage = Object.assign({}, entry, { pageNum });
 
   // yyyy.mm.dd 포맷
-  const dateObj = new Date(entry.data.date);
+  const targetDate = entry.data.updated || entry.data.date;
+  const dateObj = new Date(targetDate);
   const dateStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.${String(dateObj.getDate()).padStart(2, '0')}`;
 
   const lastGroup = groupedMemos[groupedMemos.length - 1];

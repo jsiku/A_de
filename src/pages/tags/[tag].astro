@@ -57,7 +57,8 @@ entries.forEach((entry, index) => {
   const pageNum = Math.floor(index / POSTS_PER_PAGE) + 1;
   const entryWithPage = Object.assign({}, entry, { pageNum });
 
-  const dateObj = new Date(entry.data.date);
+  const targetDate = entry.data.updated || entry.data.date;
+  const dateObj = new Date(targetDate);
   const monthStr = `${dateObj.getFullYear()}.${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
 
   const lastGroup = groupedEntries[groupedEntries.length - 1];
