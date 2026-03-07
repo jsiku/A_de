@@ -8,7 +8,20 @@ export async function getStaticPaths() {
   });
 
   // 1. 모든 글(메모 포함)을 날짜순으로 정렬합니다.
-  const sortedAll = allEntries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const sortedAll = allEntries.sort((a, b) => {
+    const isAPinned = a.data.pinned === true;
+    const isBPinned = b.data.pinned === true;
+
+    // ✨ u 설정: updated가 있으면 updated, 없으면 date의 타임스탬프 값 추출
+    const aDate = a.data.updated ? a.data.updated.valueOf() : a.data.date.valueOf();
+    const bDate = b.data.updated ? b.data.updated.valueOf() : b.data.date.valueOf();
+
+    // 1순위: Pinned 상태 비교, 2순위: u(최신 날짜) 기준 정렬
+    if (isAPinned === isBPinned) {
+      return bDate - aDate;
+    }
+    return isAPinned ? -1 : 1;
+  });
 
   // 2. 하단 이전/다음(older/newer) 링크 계산을 위해 일반 포스트만 따로 추려냅니다.
   const postsOnly = sortedAll.filter(p => p.data.type !== 'memo');
@@ -41,6 +54,19 @@ export async function getStaticPaths() {
 const { post, prevPost, nextPost } = Astro.props;
 const { Content } = await render(post);
 
+// ✨ 날짜 포맷 변환 함수 (DD. Mon. YYYY 형태)
+function formatDate(dateStr: Date | string) {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  const year = d.getFullYear();
+  return `${day}. ${month}. ${year}`;
+}
+
+// ✨ 작성일 및 수정일 조합 (수정일이 있을 때만 Updated 문구 추가)
+const createdStr = formatDate(post.data.date);
+const updatedStr = post.data.updated ? ` (Updated ${formatDate(post.data.updated)})` : '';
+const displayDate = createdStr + updatedStr;
 
 // 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
 const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-/g, '.');
