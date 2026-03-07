@@ -1,5 +1,5 @@
 ---
-date: 2026-02-11
+date: 2026-03-03
 tags: ["Astro", "DX", "webdev"]
 type: "memo"
 ---

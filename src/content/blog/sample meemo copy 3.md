@@ -1,5 +1,6 @@
 ---
-date: 2023-02-11
+date: 2023-02-10
+updated: 2026-03-01
 tags: ["Astro", "DX", "webdev"]
 type: "memo"
 pinned: true

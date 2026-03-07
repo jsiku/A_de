@@ -1,12 +1,15 @@
 ---
 title: "에디토리얼 레이아웃 및 스크롤 테스트"
 date: 2024-01-04
+updated: 2026-03-07
 tags: ["Astro", "Design", "Test"]
 type: "hej"
 description: "스크롤 시 페이드아웃 되는 커버 이미지와 상단 고정 메뉴바를 테스트하는 샘플 포스트입니다."
 cover: "../../assets/media/sample-cover.svg"
-draft: true
+draft: false
 ---
+
+이게 나오면 성공
 
 ## 커버 이미지와 스크롤 테스트
 

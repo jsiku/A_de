@@ -8,7 +8,11 @@ const allEntries = await getCollection('blog', ({ data }) => {
 });
 const hejEntries = allEntries
   .filter(entry => entry.data.type === 'hej')
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort((a, b) => {
+  const aDate = a.data.updated ? a.data.updated.valueOf() : a.data.date.valueOf();
+  const bDate = b.data.updated ? b.data.updated.valueOf() : b.data.date.valueOf();
+  return bDate - aDate;
+});
 
 // 가장 최신 글 1개만 선택
 const latestHej = hejEntries.length > 0 ? hejEntries[0] : null;
