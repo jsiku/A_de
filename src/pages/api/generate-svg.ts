@@ -6,6 +6,10 @@ export async function POST({ request, locals }: APIContext) {
   try {
     const body = await request.json();
     const textInput = body.text;
+
+    // Turnstile 토큰이 없는 경우 바로 에러 반환
+    const token = body.token;
+
     const apiKey = (locals as any).runtime.env.GEMINI_API_KEY;
     if (!apiKey) {
       return new Response(
@@ -17,6 +21,28 @@ export async function POST({ request, locals }: APIContext) {
     const systemPrompt =
       "너는 텍스트를 추상적인 SVG 코드로 변환하는 아티스트야. 입력된 글의 핵심 키워드를 파악해서 기하학적이고 현대적인 SVG 코드로만 응답해. 설명이나 인삿말은 절대 하지마. <svg> 태그로 시작해서 </svg>로 끝나야 하며, width='100%'를 포함해.";
 
+    // Turnstile 검증
+    const verify = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        body: new URLSearchParams({
+          secret: (locals as any).runtime.env.TURNSTILE_SECRET,
+          response: token,
+        }),
+      },
+    );
+
+    const result = await verify.json();
+
+    if (!result.success) {
+      return new Response(JSON.stringify({ error: "Captcha failed" }), {
+        status: 403,
+      });
+    }
+    // 검증 성공 시 계속 진행
+
+    // Gemini API 호출
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
