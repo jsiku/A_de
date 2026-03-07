@@ -16,4 +16,5 @@ export default defineConfig({
       external: ["node:path/posix"],
     },
   },
+  site: "https://siku.name",
 });
