@@ -19,6 +19,9 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 
   <div class="post-tags">
     {entry.data.tags.map((tag: string) => ( <a href={`/tags/${tag}`} class="tag">#{tag}</a> ))}
+    {/* ✨ 2. Pinned 포스트일 경우 가장 오른쪽 끝에 노란색 Pinned 뱃지 추가 */}
+    {entry.data.pinned && <span class="tag pinned-badge">Pinned</span>}
+
   </div>
 
   <div class="post-content">
@@ -58,10 +61,18 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
     transition: all 0.2s ease;
   }
 
+    /* ✨ Pinned 뱃지 전용 스타일 추가 (기존 .tag 스타일을 베이스로 색상만 덮어씀) */
+  .post-tags .pinned-badge {
+    background-color: #D4AF37; /* 포인트가 되는 겨자색(노란색) 배경 */
+    color: #111;               /* 노란 배경에 대비되는 진한 글씨 */
+    cursor: default;           /* 링크가 아니므로 손가락 대신 기본 마우스 커서 */
+  }
 
-
-
-  .post-tags .tag:hover { text-decoration: underline; }
+  .post-tags .tag:hover {
+    text-decoration: none; /* ✨ 밑줄이 절대 생기지 않도록 못 박아줍니다 */
+    background-color: #D4AF37; /* (선택사항) 밑줄 대신 마우스를 올렸을 때 배경색을 살짝 진하게 만들어주면 훨씬 버튼처럼 고급스러워 보입니다. */
+    color: #333;
+  }
 
   .post-content { padding: 1.5rem 0; }
   .post-title { margin: 0 0 0.5rem 0; font-size: 1.8rem; }

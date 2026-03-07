@@ -8,6 +8,7 @@ const { Content } = await render(post);
 ---
 <article class="memo-card">
   <div class="memo-tags">
+    {post.data.pinned && <span class="tag pinned-mark">★Pinned</span>}
     {post.data.tags.map((tag: string) => ( <a href={`/tags/${tag}`} class="tag">#{tag}</a> ))}
   </div>
   <div class="memo-body prose">
@@ -20,6 +21,14 @@ const { Content } = await render(post);
   .memo-tags { margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .tag { color: #888; text-decoration: none; font-size: 0.9rem; }
   .tag:hover { color: #111; text-decoration: underline; }
+    /* ✨ 3. Pinned 텍스트 전용 방어 스타일 */
+  span.pinned-mark {
+    cursor: default; /* 마우스 커서가 손가락(링크) 모양으로 안 변하게 함 */
+  }
+  span.pinned-mark:hover {
+    color: #888;            /* 마우스를 올려도 기존 회색(#888) 유지 */
+    text-decoration: none;  /* 마우스를 올려도 밑줄 안 생김 */
+  }
   @media (max-width: 768px) {
    .memo-card { margin-bottom: 0rem; margin-top: 2rem;}
 }

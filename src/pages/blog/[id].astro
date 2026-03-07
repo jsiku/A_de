@@ -106,13 +106,21 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
             {post.data.tags.map((tag: string) => (
               <a href={`/tags/${tag}`} class="tag">#{tag}</a>
             ))}
+            {/* ✨ Pinned 포스트일 경우 가장 앞에 겨자색 Pinned 뱃지 추가 */}
+            {post.data.pinned && <span class="tag pinned-badge">Pinned</span>}
           </div>
         </div>
      </div>
 
-     <div class="prose">
-        <Content />
-     </div>
+    <div class="prose">
+      <Content />
+      {/* ✨ 메모(memo) 타입일 때만 본문 마지막 줄 아래에 뒤로가기 링크 추가 */}
+      {post.data.type === 'memo' && (
+        <div class="memo-back-container">
+          <a href="javascript:history.back()" class="memo-back-link">Back &gt;</a>
+        </div>
+      )}
+    </div>
   </article>
 
 </BaseLayout>
@@ -185,7 +193,7 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
     position: relative;
     z-index: 1;
     padding: 4rem 20px;
-    min-height: 100vh;
+    min-height: 38vh;
     box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
   }
   .post-content-wrapper.no-cover {
@@ -199,8 +207,22 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   .post-meta { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
   .date { color: #888; font-size: 1rem; font-family: monospace; }
   .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-  .tag { background: #ccc; color: #666; padding: 0.3rem 0.6rem; font-size: 0.85rem; text-decoration: none; transition: background 0.2s; }
+  .tag { background: #ccc; color: #666; padding: 0.3rem 0.6rem; font-size: 0.85rem; text-decoration: none; transition: background 0.2s; font-weight: bold; }
   .tag:hover { background: #D4AF37; color: #111; }
+
+
+   /* ✨ Pinned 뱃지 전용 고정 스타일 추가 */
+  .pinned-badge {
+    background-color: #D4AF37 !important; /* 항상 겨자색 유지 */
+    color: #111 !important;               /* 진한 글씨 유지 */
+    font-weight: bold;
+    cursor: default;                      /* 링크가 아니므로 일반 마우스 커서 적용 */
+  }
+
+  /* 마우스가 올라가도 색이 변하거나 밑줄이 안 생기도록 고정 */
+  .pinned-badge:hover {
+    text-decoration: none;
+  }
 
     .prose :global(img) {
     width: 900px !important;             /* prose의 기본 너비 제한을 강제로 뚫음 */
@@ -213,6 +235,27 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
     margin-top: 3rem !important;         /* 이미지 위아래 여백 */
     margin-bottom: 3rem !important;
   }
+
+  /* ✨ 메모 뒤로가기 링크 스타일 */
+  .memo-back-container {
+    margin-top: 1rem;   /* 본문 마지막 줄과 여유로운 간격 */
+    text-align: right;   /* 화면 왼쪽에 배치 */
+  }
+
+  .memo-back-link {
+    color: #888;              /* 기본은 눈에 띄지 않는 차분한 회색 */
+    text-decoration: none;    /* 밑줄 제거 */
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .memo-back-link:hover {
+    color: #111;              /* 마우스를 올리면 진한 검은색으로 강조 */
+    text-decoration: underline; /* 살짝 밑줄이 생기며 클릭 유도 */
+  }
+
 
 
 
