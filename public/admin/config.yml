@@ -5,9 +5,9 @@ backend:
   base_url: https://a-de.pages.dev # 클라우드플레어 배포 주소
   auth_endpoint: api/auth # 우리가 곧 만들 자체 인증 진입점
 
-# 이미지 업로드 설정 (Astro의 src/assets/covers에 맞춤)
-media_folder: "src/assets/covers"
-public_folder: "../../assets/covers"
+# 이미지 업로드 설정 (Astro의 src/assets/media에 맞춤)
+media_folder: "src/assets/media"
+public_folder: "../../assets/media"
 
 collections:
   - name: "blog"
