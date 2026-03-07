@@ -6,7 +6,9 @@ import type { CollectionEntry } from 'astro:content';
 
 type BlogEntry = CollectionEntry<"blog">;
 
-const allEntries = await getCollection('blog');
+const allEntries = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
 
 // 'memo' 타입만 필터링 후 날짜순 정렬
 const memosOnly = allEntries.filter((entry: BlogEntry) => entry.data.type === 'memo');

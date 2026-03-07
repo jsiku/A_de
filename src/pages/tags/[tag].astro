@@ -8,7 +8,9 @@ import type { CollectionEntry } from 'astro:content';
 type BlogEntry = CollectionEntry<"blog">;
 
 export async function getStaticPaths() {
-  const allEntries = await getCollection('blog');
+  const allEntries = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
 
   // 모든 태그 추출 (포스트 + 메모 모두 포함)
   const allTags = allEntries.flatMap(entry => entry.data.tags || []);

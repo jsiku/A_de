@@ -3,7 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 // 'tags' 타입의 글만 가져와 최신순 정렬
-const allEntries = await getCollection('blog');
+const allEntries = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
 const tagPosts = allEntries
   .filter(entry => entry.data.type === 'tags')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());

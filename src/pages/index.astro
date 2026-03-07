@@ -8,7 +8,9 @@ import type { CollectionEntry } from 'astro:content';
 // 타입 에러 우회를 위한 별칭
 type BlogEntry = CollectionEntry<"blog">;
 
-const allEntries = await getCollection('blog');
+const allEntries = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? data.draft !== true : true;
+});
 
 // memo 타입 제외
 const postsOnly = allEntries.filter((entry: BlogEntry) => entry.data.type !== 'memo');
