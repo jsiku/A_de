@@ -8,7 +8,19 @@ const allEntries = await getCollection('blog', ({ data }) => {
 });
 const tagPosts = allEntries
   .filter(entry => entry.data.type === 'tags')
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort((a, b) => {
+    // ✨ 값의 유무(undefined)와 상관없이 '명확하게 true인가?'만 확인합니다.
+    const isAPinned = a.data.pinned === true;
+    const isBPinned = b.data.pinned === true;
+
+    // 1. 둘 다 고정이거나 둘 다 일반 글이면 날짜 최신순
+    if (isAPinned === isBPinned) {
+      return b.data.date.valueOf() - a.data.date.valueOf();
+    }
+
+    // 2. 둘 중 하나만 고정글이라면 고정글을 위로 올림
+    return isAPinned ? -1 : 1;
+  });
 
 // render()를 미리 모두 실행하기 위해 Promise.all 사용
 const renderedPosts = await Promise.all(
