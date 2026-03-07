@@ -3,7 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const allEntries = await getCollection('blog');
+  const allEntries = await getCollection('blog', ({ data }) => {
+    return import.meta.env.PROD ? data.draft !== true : true;
+  });
 
   // 1. 모든 글(메모 포함)을 날짜순으로 정렬합니다.
   const sortedAll = allEntries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
