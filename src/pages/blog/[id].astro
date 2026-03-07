@@ -57,15 +57,15 @@ const { Content } = await render(post);
 // ✨ 날짜 포맷 변환 함수 (DD. Mon. YYYY 형태)
 function formatDate(dateStr: Date | string) {
   const d = new Date(dateStr);
-  const day = String(d.getDate()).padStart(2, '0');
+  const day = d.getDate();
   const month = d.toLocaleString('en-US', { month: 'short' });
   const year = d.getFullYear();
-  return `${day}. ${month}. ${year}`;
+  return `${day} ${month} ${year}`;
 }
 
 // ✨ 작성일 및 수정일 조합 (수정일이 있을 때만 Updated 문구 추가)
 const createdStr = formatDate(post.data.date);
-const updatedStr = post.data.updated ? ` (Updated ${formatDate(post.data.updated)})` : '';
+const updatedStr = post.data.updated ? ` • Updated ${formatDate(post.data.updated)}` : '';
 const displayDate = createdStr + updatedStr;
 
 // 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
@@ -101,7 +101,7 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
      <div class="post-header prose">
         <h1 class="post-main-title">{post.data.title}</h1>
         <div class="post-meta">
-          <span class="date">{postDate}</span>
+          <span class="date">{displayDate}</span>
           <div class="tags">
             {post.data.tags.map((tag: string) => (
               <a href={`/tags/${tag}`} class="tag">#{tag}</a>
