@@ -2,12 +2,12 @@ backend:
   name: github
   repo: jsiku/A_de # 형님의 GitHub 저장소
   branch: main
-  base_url: https://a-de.pages.dev # 클라우드플레어 배포 주소
+  base_url: https://siku.name # 클라우드플레어 배포 주소
   auth_endpoint: api/auth # 우리가 곧 만들 자체 인증 진입점
 
 # 이미지 업로드 설정 (Astro의 src/assets/media에 맞춤)
-media_folder: "../vault/publish/a_blog_content/assets/media"
-public_folder: "../../assets/media"
+media_folder: "src/assets/covers"
+public_folder: "../../assets/covers"
 
 collections:
   - name: "blog"
