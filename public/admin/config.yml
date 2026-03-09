@@ -1,18 +1,18 @@
 backend:
   name: github
-  repo: jsiku/A_de # 형님의 GitHub 저장소
+  repo: jsiku/hub # 형님의 GitHub 저장소
   branch: main
   base_url: https://siku.name # 클라우드플레어 배포 주소
   auth_endpoint: api/auth # 우리가 곧 만들 자체 인증 진입점
 
 # 이미지 업로드 설정 (Astro의 src/assets/media에 맞춤)
-media_folder: "src/assets/covers"
+media_folder: "vault/publish/A_de/src/assets/covers"
 public_folder: "../../assets/covers"
 
 collections:
   - name: "blog"
     label: "통합 블로그 콘텐츠"
-    folder: "../vault/publish/a_blog_content/content/blog" # 마크다운 파일이 저장될 폴더
+    folder: "vault/publish/A_de/content/blog" # 마크다운 파일이 저장될 폴더
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # 파일명 규칙
     fields:
