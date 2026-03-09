@@ -6,13 +6,13 @@ backend:
   auth_endpoint: api/auth # 우리가 곧 만들 자체 인증 진입점
 
 # 이미지 업로드 설정 (Astro의 src/assets/media에 맞춤)
-media_folder: "vault/publish/A_de/src/assets/media"
+media_folder: "vault/publish/A_de_content/assets/media"
 public_folder: "../../assets/media"
 
 collections:
   - name: "blog"
     label: "통합 블로그 콘텐츠"
-    folder: "vault/publish/A_de/src/content/blog" # 마크다운 파일이 저장될 폴더
+    folder: "vault/publish/A_de_content/content/blog" # 마크다운 파일이 저장될 폴더
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # 파일명 규칙
     fields:
