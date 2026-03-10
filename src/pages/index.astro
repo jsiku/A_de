@@ -12,8 +12,8 @@ const allEntries = await getCollection('blog', ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
 });
 
-// memo 타입 제외
-const postsOnly = allEntries.filter((entry: BlogEntry) => entry.data.type !== 'memo');
+// memo, links 타입 제외
+const postsOnly = allEntries.filter((entry: BlogEntry) => ['memo', 'links'].includes(entry.data.type));
 const sortedEntries = postsOnly.sort((a, b) => {
     const isAPinned = a.data.pinned === true;
     const isBPinned = b.data.pinned === true;

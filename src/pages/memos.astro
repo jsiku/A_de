@@ -10,8 +10,8 @@ const allEntries = await getCollection('blog', ({ data }) => {
   return import.meta.env.PROD ? data.draft !== true : true;
 });
 
-// 'memo' 타입만 필터링 후 날짜순 정렬, 그리고 pinned이 true인 글은 상단 고정
-const memosOnly = allEntries.filter((entry: BlogEntry) => entry.data.type === 'memo');
+// 'memo' 'links'타입만 필터링 후 날짜순 정렬, 그리고 pinned이 true인 글은 상단 고정
+const memosOnly = allEntries.filter((entry: BlogEntry) => ['memo', 'links'].includes(entry.data.type));
 const sortedMemos = memosOnly.sort((a, b) => {
   const isAPinned = a.data.pinned === true;
   const isBPinned = b.data.pinned === true;
