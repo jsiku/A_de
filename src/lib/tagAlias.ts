@@ -1,5 +1,4 @@
 export const tagAlias: Record<string, string> = {
-
   // MMA / 격투기
   pride: "mma",
   Pride: "mma",
@@ -111,8 +110,7 @@ export const tagAlias: Record<string, string> = {
   album: "photo",
 
   // 웹 역사
-  web2.0: "web-history",
+  "web2.0": "web-history",
   "2000s": "web-history",
-  web-histroy: "web-history",
-
+  "web-history": "web-history",
 };
