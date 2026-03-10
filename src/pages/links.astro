@@ -47,7 +47,6 @@ const renderedPosts = await Promise.all(
       {renderedPosts.length > 0 ? (
         renderedPosts.map(({ post, Content }) => (
           <article class="link-explainer">
-            <h2 class="link-title">#{post.data.title || post.id}</h2>
             <div class="prose">
               <Content />
             </div>
