@@ -4,7 +4,7 @@ import Hero from '../components/Hero.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
-import { normalizeTag } from "../lib/normalizeTag";
+import { canonicalTag } from "../lib/tagAlias";
 
 // 타입 에러 우회를 위한 별칭
 type BlogEntry = CollectionEntry<"blog">;
@@ -35,8 +35,8 @@ const POSTS_PER_PAGE = 10;
 const totalPages = Math.ceil(postsOnly.length / POSTS_PER_PAGE) || 1;
 const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-const allTags = allEntries.flatMap((entry: BlogEntry) => entry.data.tags || []);
-const uniqueTags = [...new Set(allTags)];
+const allTags = allEntries.flatMap(entry => (entry.data.tags ?? []).map(canonicalTag));
+const uniqueTags = [...new Set(allTags)].sort();
 
 // 월 단위 그룹화 및 pageNum 속성 부여
 const groupedEntries: { month: string, entries: (BlogEntry & { pageNum: number })[] }[] = [];

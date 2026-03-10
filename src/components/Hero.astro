@@ -1,13 +1,8 @@
 ---
 import HeroSvg from './HeroSvg.astro';
-import { normalizeTag } from "../lib/normalizeTag";
 
-interface Props {
-  uniqueTags: string[];
-}
-
+interface Props { uniqueTags: string[]; }
 const { uniqueTags } = Astro.props;
-const canonicalTags = [...new Set(uniqueTags.map(normalizeTag))].sort();
 ---
 <section class="hero-container">
   <HeroSvg />
@@ -18,7 +13,7 @@ const canonicalTags = [...new Set(uniqueTags.map(normalizeTag))].sort();
     </form>
     <div class="tags-container">
       <div class="tags-list">
-        {canonicalTags.map(tag => ( <a href={`/tags/${tag}`} class="tag-link">#{tag}</a> ))}
+        {uniqueTags.map(tag => ( <a href={`/tags/${tag}`} class="tag-link">#{tag}</a> ))}
       </div>
       <a href="/tags" class="all-tags-link">All tags</a>
     </div>
