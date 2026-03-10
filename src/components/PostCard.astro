@@ -9,13 +9,11 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 
 ---
 <article class="post-card">
-    <a href={`/blog/${entry.id}`} class="cover-link">
-      {entry.data.cover ? (
-        <img src={entry.data.cover.src} alt="Cover" class="cover-img" />
-      ) : (
-        <div class="cover-placeholder"></div>
-      )}
-    </a>
+    {entry.data.cover && (
+      <a href={`/blog/${entry.id}`} class="cover-link">
+        <img src={entry.data.cover.src} alt={entry.data.title} class="cover-img" />
+      </a>
+    )}
 
   <div class="post-tags">
     {entry.data.tags.map((tag: string) => ( <a href={`/tags/${tag}`} class="tag">#{tag}</a> ))}
