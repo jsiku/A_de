@@ -4,6 +4,7 @@ import PostCard from '../../components/PostCard.astro';
 import MemoCard from '../../components/MemoCard.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import { normalizeTag } from '../../lib/normalizeTag';
 
 type BlogEntry = CollectionEntry<"blog">;
 
@@ -19,8 +20,11 @@ export async function getStaticPaths() {
   return uniqueTags.map(tag => {
     // 해당 태그가 포함된 글만 필터링 후 정렬
     const filteredEntries = allEntries
-      .filter(entry => entry.data.tags?.includes(tag))
-      .sort((a, b) => {
+        .filter(entry =>
+        (entry.data.tags ?? [])
+        .map(normalizeTag)
+        .includes(normalizeTag(tag))
+)      .sort((a, b) => {
         const isAPinned = a.data.pinned === true;
         const isBPinned = b.data.pinned === true;
 
