@@ -21,25 +21,38 @@ export const tagAlias: Record<string, string> = {
   나들이: "TRAVEL",
   suwon: "TRAVEL",
   칠보산: "TRAVEL",
+  travel: "TRAVEL",
 
   // 블로그 / 블로깅
   블로그: "BLOG",
   블로깅: "BLOG",
   blogging: "BLOG",
-  blog: "BLOG",
+  "blog-history": "BLOG",
+  feed: "BLOG",
+  about: "BLOG",
+  snsjsiku: "BLOG",
 
   // 리뷰
   리뷰: "REVIEW",
   review: "REVIEW",
 
+  navbar: "TEMEPLATE",
+  temeplate: "TEMEPLATE",
+  layout: "TEMEPLATE",
+  스킨: "TEMEPLATE",
+  테마: "TEMEPLATE",
+  템플릿: "TEMEPLATE",
+
   // 웹
   web: "WEB",
   웹: "WEB",
   internet: "WEB",
+  인터넷: "WEB",
   browser: "WEB",
   html: "WEB",
-  코드: "WEB",
-  code: "WEB",
+  css: "WEB",
+  domain: "WEB",
+  "personal-web": "WEB",
 
   // 블로그 플랫폼
   wordpress: "BLOG-PLATFORM",
@@ -49,7 +62,10 @@ export const tagAlias: Record<string, string> = {
   텍스트큐브: "BLOG-PLATFORM",
   tistory: "BLOG-PLATFORM",
   jekyll: "BLOG-PLATFORM",
+  Astro: "BLOG-PLATFORM",
   astro: "BLOG-PLATFORM",
+  playtalk: "BLOG-PLATFORM",
+  disqus: "BLOG-PLATFORM",
 
   // SNS
   sns: "SNS",
@@ -59,6 +75,7 @@ export const tagAlias: Record<string, string> = {
   "us-cyworld": "SNS",
   "google-friend-connect": "SNS",
   connect: "SNS",
+  "data-flow": "SNS",
 
   // 책
   책: "BOOK",
@@ -68,6 +85,11 @@ export const tagAlias: Record<string, string> = {
   판타지: "BOOK",
   장르문학: "BOOK",
   흡혈귀: "BOOK",
+  book: "BOOK",
+  "연을 쫓는 아이": "BOOK",
+  "펭귄에게 배우는 변화의 기술": "BOOK",
+  지식독점: "BOOK",
+  안드레아스에쉬바흐: "BOOK",
 
   // 기술
   nas: "TECH",
@@ -113,6 +135,9 @@ export const tagAlias: Record<string, string> = {
   "web2.0": "WEB-HISTORY",
   "2000s": "WEB-HISTORY",
   "web-history": "WEB-HISTORY",
+
+  검색창: "PLUGINS",
+  플러그인: "PLUGINS",
 };
 
 export function canonicalTag(tag: string): string {
