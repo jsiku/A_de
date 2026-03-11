@@ -23,7 +23,7 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
   </div>
 
   <div class="post-content">
-    <h2 class="post-title"><a href={`/blog/${entry.id}`}>{entry.data.title}</a></h2>
+    <h2 class="post-title"><a href={`/${entry.id}`}>{entry.data.title}</a></h2>
     {entry.data.description && <p class="post-desc">{entry.data.description}</p>}
   </div>
 </article>
