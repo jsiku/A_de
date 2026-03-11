@@ -77,12 +77,12 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   {post.data.type !== 'memo' && (
     <div class="post-navbar" id="postNavbar">
       <div class="post-navbar-inner">
-        <a href={prevPost ? `/blog/${prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
+        <a href={prevPost ? `/log/${prevPost.id}` : '#'} class={!prevPost ? 'disabled' : ''}>&lt; older</a>
         <div class="center-menu">
           <a href="/" class="index-btn">▲ Index</a>
           <span class="reading-title">Reading: {post.data.title}</span>
         </div>
-        <a href={nextPost ? `/blog/${nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
+        <a href={nextPost ? `/log/${nextPost.id}` : '#'} class={!nextPost ? 'disabled' : ''}>newer &gt;</a>
       </div>
     </div>
   )}
