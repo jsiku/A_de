@@ -7,7 +7,7 @@ backend:
 
 # 이미지 업로드 설정 (Astro의 src/assets/media에 맞춤)
 media_folder: "vault/publish/A_de_content/assets/media"
-public_folder: "vault/publish/A_de_content/assets/media"
+public_folder: "/src/assets/media"
 
 collections:
   - name: "blog"
