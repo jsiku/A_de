@@ -10,7 +10,7 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 ---
 <article class="post-card">
     {entry.data.cover && (
-      <a href={`/${entry.id}`} class="cover-link">
+      <a href={`/blog/${entry.id}`} class="cover-link">
         <img src={entry.data.cover.src} alt={entry.data.title} class="cover-img" />
       </a>
     )}
@@ -23,7 +23,7 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
   </div>
 
   <div class="post-content">
-    <h2 class="post-title"><a href={`/${entry.id}`}>{entry.data.title}</a></h2>
+    <h2 class="post-title"><a href={`/blog/${entry.id}`}>{entry.data.title}</a></h2>
     {entry.data.description && <p class="post-desc">{entry.data.description}</p>}
   </div>
 </article>
