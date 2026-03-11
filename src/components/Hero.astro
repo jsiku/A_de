@@ -13,7 +13,7 @@ const { uniqueTags } = Astro.props;
     </form>
     <div class="tags-container">
       <div class="tags-list">
-        {uniqueTags.map(tag => ( <a href={`/tag/${tag}`} class="tag-link">#{tag}</a> ))}
+        {uniqueTags.map(tag => ( <a href={`/tags/${tag}`} class="tag-link">#{tag}</a> ))}
       </div>
       <a href="/tags" class="all-tags-link">All tags</a>
     </div>
