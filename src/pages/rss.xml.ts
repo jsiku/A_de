@@ -18,7 +18,7 @@ export async function GET(context: any) {
         title: post.data.title || "Note",
         pubDate: post.data.date,
         description: introText + (post.data.description || ""),
-        link: `/log/${post.data.slug || post.id}/`,
+        link: `/blog/${post.data.slug || post.id}/`,
       };
     }),
   });
