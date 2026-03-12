@@ -16,6 +16,7 @@ const blogCollection = defineCollection({
       slug: z.string().optional(),
       emailIntro: z.string().optional(),
       pinned: z.boolean().optional(),
+      archived: z.boolean().default(false), // 추가
     }),
 });
 

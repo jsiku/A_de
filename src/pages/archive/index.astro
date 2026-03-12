@@ -1,0 +1,124 @@
+---
+import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection("blog"))
+  .filter(p => p.data.archived === true)
+  .sort((a,b)=> b.data.date.valueOf()-a.data.date.valueOf());
+---
+<ArchiveLayout title="Archive">
+
+<header class="archive-header">
+
+<h1 class="blog-title">sikuname</h1>
+<h2 class="blog-subtitle">잡동구리들 Miscellaneous</h2>
+
+<nav class="archive-nav">
+<a href="/archive/tags">/Tags</a>
+</nav>
+
+</header>
+
+
+<ul class="archive-list">
+
+{posts.map(post => (
+
+<li class="archive-item">
+
+<a href={`/archive/${post.id}`} class="post-title">
+{post.data.title}
+</a>
+
+<span class="post-date">
+{post.data.date.toISOString().slice(0,10)}
+</span>
+
+</li>
+
+))}
+
+</ul>
+
+</ArchiveLayout>
+
+<script>
+  const pageBtns = document.querySelectorAll('.page-btn');
+  const postItems = document.querySelectorAll('.post-item');
+
+  function showPage(page: number) {
+    postItems.forEach((item) => {
+      const el = item as HTMLElement;
+      el.style.display = parseInt(el.dataset.page || '1') === page ? 'block' : 'none';
+    });
+
+    pageBtns.forEach(btn => {
+      if (parseInt(btn.getAttribute('data-target-page') || '1') === page) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    document.querySelectorAll('.month-group').forEach(group => {
+      const visibleItems = group.querySelectorAll('.post-item[style="display: block;"]');
+      (group as HTMLElement).style.display = visibleItems.length > 0 ? 'flex' : 'none';
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  pageBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = parseInt((e.currentTarget as HTMLElement).getAttribute('data-target-page') || '1');
+      showPage(target);
+    });
+  });
+
+  if (pageBtns.length > 0) showPage(1);
+</script>
+
+<style>
+
+.archive-header{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.archive-nav{
+  margin-top:10px;
+  font-size: 1.2rem;
+}
+
+.archive-nav a{
+  margin:0 6px;
+}
+
+.archive-list{
+  max-width:760px;
+  margin:0 auto;
+  padding:0;
+  list-style:none;
+}
+
+.archive-item{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin:6px 0;
+}
+
+.post-title{
+  flex:0 1 auto;
+  font-size: 1.2rem;
+}
+
+.post-date{
+  margin-right:auto;
+  white-space:nowrap;
+}
+:global(.site-header) {
+
+   background: #fff !important;
+  }
+</style>

@@ -1,0 +1,43 @@
+<svg width="100%" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+text{
+font-family: system-ui, sans-serif;
+fill:#444;
+}
+.node{
+fill:#f8f8f8;
+stroke:#888;
+stroke-width:1.5;
+}
+.line{
+stroke:#aaa;
+stroke-width:2;
+}
+</style>
+
+<circle cx="450" cy="260" r="70" class="node"/>
+<text x="450" y="265" text-anchor="middle">Blog</text>
+
+<circle cx="200" cy="120" r="40" class="node"/>
+<text x="200" y="125" text-anchor="middle">CMS</text>
+
+<circle cx="700" cy="120" r="40" class="node"/>
+<text x="700" y="125" text-anchor="middle">Hosting</text>
+
+<circle cx="200" cy="400" r="40" class="node"/>
+<text x="200" y="405" text-anchor="middle">Domain</text>
+
+<circle cx="700" cy="400" r="40" class="node"/>
+<text x="700" y="405" text-anchor="middle">Tools</text>
+
+<line x1="240" y1="140" x2="400" y2="220" class="line"/>
+<line x1="660" y1="140" x2="500" y2="220" class="line"/>
+<line x1="240" y1="380" x2="400" y2="300" class="line"/>
+<line x1="660" y1="380" x2="500" y2="300" class="line"/>
+
+<text x="450" y="70" text-anchor="middle" font-size="26">
+Start Dev Blog
+</text>
+
+</svg>

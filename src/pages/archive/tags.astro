@@ -1,0 +1,115 @@
+---
+import { getCollection } from "astro:content";
+import ArchiveLayout from "../../layouts/ArchiveLayout.astro";
+import type { CollectionEntry } from "astro:content";
+
+
+type BlogEntry = CollectionEntry<"blog">;
+
+const posts: BlogEntry[] = (await getCollection("blog"))
+  .filter(p => p.data.archived === true)
+  .sort((a,b)=> b.data.date.valueOf()-a.data.date.valueOf());
+
+const tagMap = new Map<string, BlogEntry[]>();
+
+for (const post of posts) {
+  const tags = post.data.tags || [];
+
+  for (const tag of tags) {
+    if (!tagMap.has(tag)) tagMap.set(tag, []);
+    tagMap.get(tag)!.push(post);
+  }
+}
+
+const tags = [...tagMap.keys()].sort();
+
+
+const tagCounts = new Map<string, number>();
+
+for (const [tag, posts] of tagMap) {
+  tagCounts.set(tag, posts.length);
+}
+
+const maxCount = Math.max(...tagCounts.values());
+
+---
+
+<ArchiveLayout title="Tags" hideEmailFooter>
+
+<h1>Tags</h1>
+
+<div class="tag-cloud">
+
+  {tags.map(tag => {
+
+    const count = tagCounts.get(tag);
+    const size = 0.9 + (count! / maxCount) * 0.8;
+
+    return (
+      <a href={`#${tag}`} style={`font-size:${size}rem`}>
+        {tag}
+      </a>
+    );
+  })}
+
+</div>
+
+{tags.map(tag => (
+
+<section id={tag} class="tag-section">
+
+<h2>{tag}</h2>
+
+<ul>
+
+{tagMap.get(tag)!.map(post => (
+
+<li>
+<a href={`/archive/${post.id}`}>
+{post.data.title}
+</a>
+</li>
+
+))}
+
+</ul>
+
+</section>
+
+))}
+
+</ArchiveLayout>
+<style>
+.tag-cloud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px 24px;
+  margin:20px 0 40px 0;
+}
+
+.tag-cloud a{
+  color:#da4939;
+  text-decoration:none;
+}
+
+.tag-section{
+  scroll-margin-top:150px;
+}
+
+.tag-section h2{
+  margin-top:60px;
+}
+
+.tag-section ul{
+  list-style:none;
+  padding:0;
+}
+
+.tag-section li{
+  margin:8px 0;
+}
+:global(.site-header) {
+
+   background: #fff !important;
+  }
+</style>

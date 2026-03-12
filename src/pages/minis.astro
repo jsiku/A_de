@@ -181,9 +181,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* TOC 서브 메뉴바 (Sticky) */
   .minis-toc {
     position: sticky;
-    top: 70px; /* 메인 헤더 높이에 따라 조절 */
+    top: 60px; /* 메인 헤더 높이에 따라 조절 */
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
+    background: #E1DDD1;
     border-bottom: 1px solid #eaeaea;
     backdrop-filter: blur(5px);
   }
@@ -275,4 +275,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .loading-msg { color: #D4AF37; font-weight: bold; }
   .error-msg { color: #d9534f; font-weight: bold; }
   .divider { border: 0; border-top: 1px solid #eaeaea; margin: 4rem 0; }
+   :global(.site-header) {
+
+   background: #F0F4F8 !important;
+  }
 </style>

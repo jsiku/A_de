@@ -1,0 +1,129 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  hideEmailFooter?: boolean;
+}
+
+const { title = "Archive", hideEmailFooter = false } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <Header />
+    <div class="archive-notice">
+  <p>
+  오래된 글들을 모아 둔 곳입니다. 지금의 생각과는 다를 수 있습니다.
+  </p>
+  <p class="archive-en">Older writings. My views may have changed.</p>
+</div>
+
+   <main class="archive-container">
+      <slot />
+    </main>
+    <Footer hideEmailFooter={true} />
+  </body>
+</html>
+
+<style is:global>
+  /* ✨ 1번 문제 해결: 헤더와 이미지 사이의 불필요한 간격 및 브라우저 기본 여백 완벽 제거 */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    font-family: "Ubuntu Mono", "Bodoni Roman", Bodoni, "Nanum Myeongjo", serif;
+
+  }
+
+
+.archive-container {
+  max-width: 760px;
+  margin: 3rem auto;
+  padding: 0 20px;
+
+}
+
+.prose {
+  max-width:720px;
+  margin:0 auto;
+  padding:0 20px;
+}
+
+/* 모든 헤더 */
+
+h1, h2, h3, h4, h5, h6{
+  color:#2b2b2b;
+}
+
+span {
+  color:#515151;
+}
+
+/* 링크 */
+
+a,
+a:visited,
+a:hover,
+a:active {
+  color: #da4939;
+  text-decoration: none;
+}
+
+/* 날짜 스타일 */
+
+time,
+.date{
+  color:#7a7a7a;
+  font-size:0.9rem;
+}
+
+h1{
+ font-size: 2.25rem;
+ font-weight: normal;
+ margin: 0;
+}
+
+h2 {
+ font-size: 2rem;
+ font-weight: normal;
+ margin: 0;
+}
+
+.archive-notice{
+  position:sticky;
+  top:60px; /* 헤더 높이에 맞게 조정 */
+
+  max-width:760px;
+  margin:0 auto;
+
+  background:#E1DDD1;
+  color:#2b2b2b;
+
+  padding:5px 5px;
+
+  border-radius:8px;
+
+  z-index:5;
+}
+
+.archive-notice p{
+  margin:2px 0;
+  font-size: 0.85rem;
+    display:flex;
+    justify-content: center;
+  }
+
+.archive-en{
+  font-size:0.85rem;
+  opacity:0.9;
+}
+
+
+</style>

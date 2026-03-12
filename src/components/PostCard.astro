@@ -1,8 +1,12 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
-interface Props { entry: CollectionEntry<'blog'>; }
-const { entry } = Astro.props;
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  href?: string;
+}
+
+const { entry, href } = Astro.props as Props;
 
 // 이미지 객체(.src) 처리 안전장치
 const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : entry.data.cover;
@@ -10,7 +14,7 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 ---
 <article class="post-card">
     {entry.data.cover && (
-      <a href={`/log/${entry.id}`} class="cover-link">
+      <a href={href ?? `/log/${entry.id}`} class="cover-link">
         <img src={entry.data.cover.src} alt={entry.data.title} class="cover-img" />
       </a>
     )}
@@ -23,13 +27,13 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
   </div>
 
   <div class="post-content">
-    <h2 class="post-title"><a href={`/log/${entry.id}`}>{entry.data.title}</a></h2>
+    <h2 class="post-title"><a href={href ?? `/log/${entry.id}`}>{entry.data.title}</a></h2>
     {entry.data.description && <p class="post-desc">{entry.data.description}</p>}
   </div>
 </article>
 
 <style>
-  .post-card { display: flex; flex-direction: column; width: 100%; margin-bottom: 3rem; }
+  .post-card { display: flex; flex-direction: column; width: 100%; margin-bottom: 1rem; }
   .cover-link { display: block; width: 100%; text-decoration: none;}
   .cover-img, .cover-placeholder { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: opacity 0.2s; }
   .cover-placeholder { background: #f0f0f0; }
@@ -61,7 +65,7 @@ const coverSrc = typeof entry.data.cover === 'object' ? entry.data.cover?.src : 
 
     /* ✨ Pinned 뱃지 전용 스타일 추가 (기존 .tag 스타일을 베이스로 색상만 덮어씀) */
   .post-tags .pinned-badge {
-    background-color: #D4AF37; /* 포인트가 되는 겨자색(노란색) 배경 */
+    background-color: #948A7A;
     color: #111;               /* 노란 배경에 대비되는 진한 글씨 */
     cursor: default;           /* 링크가 아니므로 손가락 대신 기본 마우스 커서 */
   }

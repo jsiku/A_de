@@ -71,4 +71,11 @@ collections:
           required: false,
           default: false,
         }
+      - {
+          label: "Archived",
+          name: "archived",
+          widget: "boolean",
+          required: false,
+          default: false,
+        }
       - { label: "본문 내용", name: "body", widget: "markdown" }

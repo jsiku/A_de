@@ -1,0 +1,35 @@
+<svg width="100%" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+
+<style>
+text{
+font-family: system-ui, sans-serif;
+fill:#444;
+}
+.node{
+fill:#fafafa;
+stroke:#777;
+stroke-width:1.5;
+}
+.line{
+stroke:#aaa;
+stroke-width:2;
+}
+</style>
+
+<circle cx="450" cy="250" r="70" class="node"/>
+<text x="450" y="255" text-anchor="middle">siku</text>
+
+<circle cx="220" cy="150" r="40" class="node"/>
+<text x="220" y="155" text-anchor="middle">blog</text>
+
+<circle cx="680" cy="150" r="40" class="node"/>
+<text x="680" y="155" text-anchor="middle">wiki</text>
+
+<line x1="260" y1="180" x2="400" y2="230" class="line"/>
+<line x1="640" y1="180" x2="500" y2="230" class="line"/>
+
+<text x="450" y="90" text-anchor="middle" font-size="26">
+2026 Restart
+</text>
+
+</svg>

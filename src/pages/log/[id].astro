@@ -24,8 +24,9 @@ export async function getStaticPaths() {
   });
 
   // 2. 하단 이전/다음(older/newer) 링크 계산을 위해 일반 포스트만 따로 추려냅니다.
-  const postsOnly = sortedAll.filter(p => p.data.type !== 'memo');
-
+  const postsOnly = sortedAll.filter(
+    p => !['memo', 'links'].includes(p.data.type) && !p.data.archived
+  );
   // 3. 메모를 포함한 '모든 글'에 대해 고유 페이지 경로를 생성합니다.
   return sortedAll.map((post) => {
     let prevPost = null;
@@ -64,8 +65,8 @@ function formatDate(dateStr: Date | string) {
 }
 
 // ✨ 작성일 및 수정일 조합 (수정일이 있을 때만 Updated 문구 추가)
-const createdStr = formatDate(post.data.date);
-const updatedStr = post.data.updated ? ` • Updated ${formatDate(post.data.updated)}` : '';
+const createdStr = `${formatDate(post.data.date)},`;
+const updatedStr = post.data.updated ? ` updated ${formatDate(post.data.updated)},` : '';
 const displayDate = createdStr + updatedStr;
 
 // 형님께서 직접 수정하셨던 완벽한 날짜 포맷 로직 적용!
@@ -99,17 +100,16 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   <!-- 본문 영역: 이미지 밑에 있다가 위로 덮으며 올라옴 -->
   <article class={`post-content-wrapper ${!post.data.cover ? 'no-cover' : ''}`} data-pagefind-body>
      <div class="post-header prose">
-        <h1 class="post-main-title">{post.data.title}</h1>
         <div class="post-meta">
           <span class="date">{displayDate}</span>
           <div class="tags">
             {post.data.tags.map((tag: string) => (
               <a href={`/tags/${tag}`} class="tag">#{tag}</a>
             ))}
-            {/* ✨ Pinned 포스트일 경우 가장 앞에 겨자색 Pinned 뱃지 추가 */}
             {post.data.pinned && <span class="tag pinned-badge">Pinned</span>}
           </div>
         </div>
+        <h1 class="post-main-title">{post.data.title}</h1>
      </div>
 
     <div class="prose">
@@ -132,7 +132,7 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
     top: 0;
     left: 0;
     width: 100%;
-    background: #D4AF37;
+    background: #E1DDD1;
     color: #111;
     transform: translateY(-100%);
     transition: transform 0.3s ease;
@@ -189,7 +189,6 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   /* 본문 영역 */
   .post-content-wrapper {
     margin-top: 45vh; /* 이미지 높이만큼 아래에서 시작하여 이미지를 덮으며 올라옴 */
-    background: #fff;
     position: relative;
     z-index: 1;
     padding: 4rem 20px;
@@ -202,18 +201,53 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   }
 
   /* 메타 정보 디자인 */
-  .post-header { margin-bottom: 3rem; text-align: center; }
-  .post-main-title { font-size: 2.5rem; margin: 0 0 1rem 0; }
-  .post-meta { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-  .date { color: #888; font-size: 1rem; font-family: monospace; }
-  .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
-  .tag { background: #ccc; color: #666; padding: 0.3rem 0.6rem; font-size: 0.85rem; text-decoration: none; transition: background 0.2s; font-weight: bold; }
-  .tag:hover { background: #D4AF37; color: #111; }
+.post-header {
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.post-main-title {
+  font-size: 3rem;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+.post-meta {
+  display: flex;
+  flex-direction: row;   /* ← 세로 → 가로 */
+  align-items: center;   /* ← 왼쪽 정렬 */
+  gap: 0.6rem;
+}
+
+.date {
+  color: #888;
+  font-size: 1rem;
+  font-family: monospace;
+}
+
+.tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;  /* ← 중앙 → 왼쪽 */
+}
+
+.tag {
+  color: #666;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tag:hover {
+  background: #D4AF37;
+  color: #111;
+}
 
 
    /* ✨ Pinned 뱃지 전용 고정 스타일 추가 */
   .pinned-badge {
-    background-color: #D4AF37 !important; /* 항상 겨자색 유지 */
+    background-color: #E1DDD1 !important; /* 항상 겨자색 유지 */
     color: #111 !important;               /* 진한 글씨 유지 */
     font-weight: bold;
     cursor: default;                      /* 링크가 아니므로 일반 마우스 커서 적용 */

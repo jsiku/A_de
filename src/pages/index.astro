@@ -14,21 +14,24 @@ const allEntries = await getCollection('blog', ({ data }) => {
 });
 
 // memo 타입 제외
-const postsOnly = allEntries.filter((entry: BlogEntry) => !['memo', 'links'].includes(entry.data.type));
-  const sortedEntries = postsOnly.sort((a, b) => {
-    const isAPinned = a.data.pinned === true;
-    const isBPinned = b.data.pinned === true;
+const postsOnly = allEntries.filter((entry: BlogEntry) =>
+  !['memo', 'links'].includes(entry.data.type) && entry.data.archived !== true
+);
 
-    // ✨ u 설정: updated가 있으면 updated, 없으면 date의 타임스탬프 값 추출
-    const aDate = a.data.updated ? a.data.updated.valueOf() : a.data.date.valueOf();
-    const bDate = b.data.updated ? b.data.updated.valueOf() : b.data.date.valueOf();
+const sortedEntries = postsOnly.sort((a, b) => {
+  const isAPinned = a.data.pinned === true;
+  const isBPinned = b.data.pinned === true;
 
-    // 1순위: Pinned 상태 비교, 2순위: u(최신 날짜) 기준 정렬
-    if (isAPinned === isBPinned) {
-      return bDate - aDate;
-    }
-    return isAPinned ? -1 : 1;
-  });
+  // ✨ u 설정: updated가 있으면 updated, 없으면 date의 타임스탬프 값 추출
+  const aDate = a.data.updated ? a.data.updated.valueOf() : a.data.date.valueOf();
+  const bDate = b.data.updated ? b.data.updated.valueOf() : b.data.date.valueOf();
+
+  // 1순위: Pinned 상태 비교, 2순위: u(최신 날짜) 기준 정렬
+  if (isAPinned === isBPinned) {
+    return bDate - aDate;
+  }
+  return isAPinned ? -1 : 1;
+});
 
 // 한 페이지당 10개 표시
 const POSTS_PER_PAGE = 10;
@@ -126,9 +129,11 @@ sortedEntries.forEach((entry, index) => {
 
 <style>
   .post-list-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
-  .month-group { display: flex; gap: 2rem; margin-bottom: 2rem; }
+  .month-group { display: flex; gap: 2rem; border-top-width: 3px;
+    border-top-style: solid;
+    border-top-color: #E1DDD1; padding-top: 1rem;}
   .month-sidebar { flex: 0 0 100px; }
-  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #e9c362; }
+  .sticky-month { position: sticky; top: 100px; font-size: 1.2rem; font-weight: 800; color: #2b2b2b; }
   .month-content { flex: 1; display: flex; flex-direction: column; }
 
   .pagination { display: flex; gap: 0.5rem; justify-content: center; margin-top: 3rem; margin-bottom: 5rem; }
@@ -151,9 +156,6 @@ sortedEntries.forEach((entry, index) => {
     width: 100%; /* 왼쪽 한구석이 아니라 모바일 화면 전체 너비를 쓰도록 풀기 */
     margin-bottom: 0.5rem;
     flex: 0 0 10px;
-    border-bottom-width: 3px;
-    border-bottom-style: solid;
-    border-bottom-color: #e9c362;
   }
 }
 </style>

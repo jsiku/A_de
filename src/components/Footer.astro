@@ -3,48 +3,151 @@ interface Props { hideEmailFooter?: boolean; }
 const { hideEmailFooter = false } = Astro.props;
 const currentYear = new Date().getFullYear();
 ---
+
 <footer class="site-footer">
+
   {!hideEmailFooter && (
     <div class="footer-top">
-      <div class="footer-inner">
-        <h3>Stay updated!</h3>
-        <p>RSS로 새글을 확인해 보세요</p>
-        <a href="/rss.xml" class="rss-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
-          Subscribe
-        </a>
-      </div>
+      <h3>Stay updated!</h3>
+      <p>RSS로 새글을 확인해 보세요</p>
+      <a href="/rss.xml" class="rss-btn">Subscribe</a>
     </div>
   )}
+
   <div class="footer-bottom">
-    <div class="footer-inner">
-      <p>&copy; {currentYear} Siku.name. All rights reserved.</p>
+
+    <div class="footer-main">
+
+      <div class="footer-links">
+        <h4>FEW MORE LINKS</h4>
+
+        <nav>
+          <a href="/">Home</a>
+          <a href="/tags">Tags</a>
+          <a href="/memos">Memos</a>
+          <a href="/archive">Archive</a>
+          <a href="/hej">About</a>
+          <a href="/minis">Minis</a>
+          <a href="/search">Search</a>
+          <a href="/rss.xml">Feed</a>
+        </nav>
+      </div>
+
+      <div class="footer-follow">
+        <h4>FOLLOW ME</h4>
+
+<a href="https://github.com/jsiku">
+<img src="https://cdn.simpleicons.org/github/ffffff" width="16">
+</a>
+      </div>
+
     </div>
+
+<div class="footer-credit">
+  <p>
+    Template inspired by
+    <a href="https://github.com/gayanvirajith/harmony">Gayan Virajith</a>
+    and
+    <a href="https://blog.zsa.io">blog.zsa.io</a>
+  </p>
+  <p>© {currentYear} Siku.name. All rights reserved.</p>
+</div>
   </div>
+
 </footer>
-
 <style>
-  .site-footer { text-align: center; }
-  .footer-top { background-color: #f5f5f5; padding: 4rem 20px; }
-  .footer-top h3 { margin: 0 0 0.5rem 0; font-size: 1.5rem; color: #111; }
-  .footer-top p { margin: 0 0 1.5rem 0; color: #555; }
-  
-  .rss-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #111;
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1rem;
-    padding: 0.8rem 2rem;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-  .rss-btn:hover { background-color: #333; color: #D4AF37; }
 
-  .footer-bottom { background-color: #e0e0e0; padding: 1.5rem 20px; color: #555; font-size: 0.9rem; }
-  .footer-bottom p { margin: 0; }
-  .footer-inner { max-width: 900px; margin: 0 auto; }
+
+.site-footer { font-size:0.9rem;}
+.footer-top {   text-align:center;
+background-color: #F0F1E8; padding: 1.8rem 20px; }
+.footer-top h3 { margin: 0 0 0.5rem 0; font-size: 1.5rem; color: #111; }
+.footer-top p { margin: 0 0 1rem 0; color: #555; }
+
+.rss-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #111;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.rss-btn:hover { background-color: #333; color: #D4AF37; }
+
+.footer-bottom{
+  background:#2e2e2e;
+  color:#ccc;
+  padding:0rem 1rem;
+}
+.footer-links,
+.footer-follow{
+  min-width:220px;
+}
+.footer-main{
+  max-width:900px;
+  margin:0 auto;
+  padding-bottom: 0.5rem;
+  display:flex;
+  justify-content:space-evenly;
+  gap:40px;
+  flex-wrap:wrap;
+
+}
+
+.footer-links h4,
+.footer-follow h4{
+  color:#fff;
+  font-size:0.9rem;
+  padding-top:10px;
+  border-top:2px solid #555;
+}
+
+.footer-links nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+}
+
+
+.footer-follow svg{
+  fill:#ddd;
+}
+
+.footer-follow svg:hover{
+  fill:#fff;
+}
+
+.footer-credit{
+  max-width:900px;
+  margin:1rem auto 0;
+  padding-bottom: 1rem;
+  text-align:center;
+  color:#aaa;
+  line-height: 1.5;
+}
+
+.footer-bottom a,
+.footer-bottom a:visited,
+.footer-bottom a:hover,
+.footer-bottom a:active{
+  color:#da4939;
+  text-decoration:none;
+}
+
+.footer-credit p{
+  margin:4px 0;
+}
+@media (max-width:800px){
+  .footer-main{
+    justify-content:flex-start;
+  }
+}
+
 </style>
+
+

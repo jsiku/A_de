@@ -125,7 +125,7 @@ const currentTheme = THEMES[colorIndex];
                 {entry.data.type === 'memo' ? (
                   <MemoCard post={entry} />
                 ) : (
-                  <PostCard entry={entry} />
+                  <PostCard entry={entry} href={entry.data.archived ? `/archive/${entry.id}` : `/log/${entry.id}`}/>
                 )}
               </div>
             ))}
@@ -144,6 +144,7 @@ const currentTheme = THEMES[colorIndex];
     </div>
   </div>
 </BaseLayout>
+
 
 <script>
   const pageBtns = document.querySelectorAll('.page-btn');
@@ -230,7 +231,6 @@ const currentTheme = THEMES[colorIndex];
     top: 67px; /* 메인 헤더 높이에 따라 조절 */
     z-index: 100;
 
-    background: rgba(255, 255, 255, 0.95);
     }
   .tag-filter-info p {
     font-size: 1.2rem;
@@ -281,5 +281,8 @@ const currentTheme = THEMES[colorIndex];
     margin-bottom: 2rem;
     border-bottom: 0px;
   }
+}
+:global(.site-header) {
+  background: ${currentTheme.bg} !important;
 }
 </style>

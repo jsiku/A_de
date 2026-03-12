@@ -1,58 +1,149 @@
 ---
 ---
 <div class="hero-svg-wrapper">
-<svg class="bg-svg" width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#faf9f6"/>
+<svg class="bg-svg" width="100%" height="100%" viewBox="190 110 1280 720" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- 자전거 -->
-  <g stroke="#E87A5D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <circle cx="280" cy="220" r="35" stroke="#4A4A4A" stroke-width="6" />
-    <circle cx="480" cy="220" r="35" stroke="#4A4A4A" stroke-width="6" />
-    <path d="M 280 220 L 340 160 L 430 160 L 480 220" />
-    <path d="M 340 160 L 380 220 L 430 160" />
-    <path d="M 330 140 L 350 140" stroke-width="8" stroke="#333"/>
-    <path d="M 430 160 L 420 120 L 440 110" stroke="#333" stroke-width="5"/>
-  </g>
+<defs>
 
-  <!-- 키캡 -->
-  <g transform="translate(140, 90) rotate(-15)">
-    <rect width="45" height="45" rx="8" fill="#F4D35E" stroke="#E2C145" stroke-width="2"/>
-    <rect x="5" y="5" width="35" height="30" rx="4" fill="#F9E286" />
-    <text x="22.5" y="26" font-family="sans-serif" font-size="14" font-weight="bold" fill="#333" text-anchor="middle">Esc</text>
-  </g>
-  <g transform="translate(600, 130) rotate(22)">
-    <rect width="45" height="45" rx="8" fill="#4B9CB3" stroke="#3B8499" stroke-width="2"/>
-    <rect x="5" y="5" width="35" height="30" rx="4" fill="#65B1C6" />
-    <text x="22.5" y="27" font-family="sans-serif" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">⌘</text>
-  </g>
-  <g transform="translate(200, 300) rotate(-28)">
-    <rect width="45" height="45" rx="8" fill="#E66A6A" stroke="#C95454" stroke-width="2"/>
-    <rect x="5" y="5" width="35" height="30" rx="4" fill="#F08282" />
-    <text x="22.5" y="26" font-family="sans-serif" font-size="14" font-weight="bold" fill="#fff" text-anchor="middle">Del</text>
-  </g>
-  <g transform="translate(560, 270) rotate(12)">
-    <rect width="45" height="45" rx="8" fill="#A8D0E6" stroke="#8CB8CF" stroke-width="2"/>
-    <rect x="5" y="5" width="35" height="30" rx="4" fill="#C1E1F2" />
-    <text x="22.5" y="26" font-family="sans-serif" font-size="14" font-weight="bold" fill="#333" text-anchor="middle">Fn</text>
-  </g>
+<!-- grain texture -->
+<filter id="grain">
+<feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+<feColorMatrix type="saturate" values="0"/>
+<feComponentTransfer>
+<feFuncA type="table" tableValues="0 0.06"/>
+</feComponentTransfer>
+</filter>
 
-  <!-- <text x="35%" y="30%" font-size="30" font-weight="800" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="0.01em">Moments</text>
-  <text x="55%" y="69%" font-size="28" font-weight="900" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="-0.01em">in progress</text> -->
+
+</defs>
+
+
+<!-- background -->
+<rect width="1600" height="900" fill="#F0F1E8"/>
+
+<!-- grain overlay -->
+<rect width="1600" height="900" filter="url(#grain)" opacity="0.4"/>
+
+
+<!-- clouds -->
+<g opacity="0.5">
+<ellipse cx="300" cy="180" rx="120" ry="50" fill="#ffffff"/>
+<ellipse cx="380" cy="180" rx="90" ry="40" fill="#ffffff"/>
+<ellipse cx="250" cy="190" rx="80" ry="35" fill="#ffffff"/>
+
+<ellipse cx="1300" cy="220" rx="120" ry="50" fill="#ffffff"/>
+<ellipse cx="1380" cy="220" rx="90" ry="40" fill="#ffffff"/>
+<ellipse cx="1250" cy="230" rx="80" ry="35" fill="#ffffff"/>
+</g>
+
+
+<!-- stars -->
+<g class="star">
+<circle cx="200" cy="120" r="6"/>
+<circle cx="480" cy="140" r="5"/>
+<circle cx="1400" cy="120" r="6"/>
+<circle cx="1200" cy="180" r="4"/>
+<circle cx="900" cy="120" r="5"/>
+</g>
+
+
+<!-- ground shadow -->
+<ellipse cx="780" cy="670" rx="500" ry="60" fill="#000" opacity="0.08"/>
+
+
+<!-- wheels -->
+<circle cx="500" cy="600" r="130" class="wheel"/>
+<circle cx="1050" cy="600" r="130" class="wheel"/>
+
+<!-- spokes -->
+<line x1="500" y1="600" x2="500" y2="470" stroke="#777" stroke-width="4"/>
+<line x1="500" y1="600" x2="630" y2="600" stroke="#777" stroke-width="4"/>
+<line x1="500" y1="600" x2="370" y2="600" stroke="#777" stroke-width="4"/>
+
+<line x1="1050" y1="600" x2="1050" y2="470" stroke="#777" stroke-width="4"/>
+<line x1="1050" y1="600" x2="1180" y2="600" stroke="#777" stroke-width="4"/>
+<line x1="1050" y1="600" x2="920" y2="600" stroke="#777" stroke-width="4"/>
+
+
+<!-- bicycle frame -->
+<line x1="500" y1="600" x2="720" y2="420" class="frame"/>
+<line x1="720" y1="420" x2="900" y2="600" class="frame"/>
+<line x1="900" y1="600" x2="1050" y2="600" class="frame"/>
+<line x1="720" y1="420" x2="980" y2="420" class="frame"/>
+<line x1="980" y1="420" x2="1050" y2="600" class="frame"/>
+<line x1="720" y1="420" x2="500" y2="600" class="frame"/>
+
+
+<!-- seat -->
+<line x1="720" y1="420" x2="690" y2="380" class="outline"/>
+<rect x="650" y="350" width="90" height="26" rx="12" fill="#2F2F2F"/>
+
+
+<!-- handle -->
+<line x1="980" y1="420" x2="1030" y2="340" class="outline"/>
+<line x1="1030" y1="340" x2="1120" y2="300" class="outline"/>
+
+
+<!-- crank -->
+<circle cx="900" cy="600" r="26" fill="#2F2F2F"/>
+
+
+<!-- floating shapes -->
+<g opacity="0.6">
+<circle cx="600" cy="200" r="10" fill="#F4A261"/>
+<circle cx="800" cy="140" r="8" fill="#E9C46A"/>
+<circle cx="1000" cy="200" r="9" fill="#F4A261"/>
+</g>
+
+
+<!-- keycaps -->
+
+<!-- ESC -->
+<g transform="rotate(-18 260 180)">
+<rect x="210" y="140" width="140" height="140" rx="26" fill="#F4E06D" stroke="#2F2F2F" stroke-width="10"/>
+<rect x="230" y="160" width="100" height="100" rx="18" fill="#F7E989"/>
+<text x="280" y="215" text-anchor="middle" class="keytext">Esc</text>
+</g>
+
+
+<!-- DEL -->
+<g transform="rotate(18 340 720)">
+<rect x="280" y="660" width="140" height="140" rx="26" fill="#F25F5C" stroke="#2F2F2F" stroke-width="10"/>
+<rect x="300" y="680" width="100" height="100" rx="18" fill="#F47C7A"/>
+<text x="350" y="735" text-anchor="middle" class="keytext" fill="#fff">Del</text>
+</g>
+
+
+<!-- CMD -->
+<g transform="rotate(-14 1340 300)">
+<rect x="1280" y="240" width="140" height="140" rx="26" fill="#4DA3B3" stroke="#2F2F2F" stroke-width="10"/>
+<rect x="1300" y="260" width="100" height="100" rx="18" fill="#5DB7C7"/>
+<text x="1350" y="315" text-anchor="middle" class="keytext" fill="#fff">⌘</text>
+</g>
+
+
+<!-- FN -->
+<g transform="rotate(12 1300 720)">
+<rect x="1240" y="660" width="140" height="140" rx="26" fill="#A8C7DA" stroke="#2F2F2F" stroke-width="10"/>
+<rect x="1260" y="680" width="100" height="100" rx="18" fill="#BED9E8"/>
+<text x="1310" y="735" text-anchor="middle" class="keytext">Fn</text>
+</g>
+
 
 </svg>
 
   <div class="text-overlay">
     <svg width="100%" height="100%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-      <text x="23%" y="5%" font-size="35" font-weight="800" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="0.01em">Moments</text>
-      <text x="65%" y="92%" font-size="33" font-weight="900" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="-0.01em">in progress</text>
+      <text x="20%" y="10%" font-size="35" font-weight="800" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="0.01em">Moments</text>
+      <text x="65%" y="120%" font-size="33" font-weight="900" text-anchor="middle" fill="#1E3A8A" dominant-baseline="middle" letter-spacing="-0.01em">in progress</text>
     </svg>
   </div>
 </div>
 
 <style>
-  .hero-svg-wrapper { width: 100vw; height: 81vh; min-height: 300px;    border-bottom-width: 10px;
+  .hero-svg-wrapper { width: 100vw; height: 81vh; min-height: 300px;    border-bottom-width: 5px;
     border-bottom-style: solid;
-    border-bottom-color: #e9c362;    position: relative;
+    border-bottom-color: ;    position: relative;
     overflow: hidden;}
       .bg-svg {
     position: absolute;
@@ -73,4 +164,36 @@
     z-index: 2; /* 배경보다 위로 오게 설정 */
     pointer-events: none; /* 글씨 투명 영역 때문에 아래의 요소가 클릭 안 되는 현상 방지 */
   }
+
+.frame{
+stroke:#E76F51;
+stroke-width:22;
+stroke-linecap:round;
+stroke-linejoin:round;
+fill:none;
+}
+
+.wheel{
+stroke:#3D3D3D;
+stroke-width:18;
+fill:#F0F1E8;
+}
+
+.outline{
+stroke:#2F2F2F;
+stroke-width:16;
+stroke-linecap:round;
+}
+
+.keytext{
+font-family:Arial, Helvetica, sans-serif;
+font-weight:bold;
+font-size:34px;
+fill:#333;
+}
+
+.star{
+fill:#E9C46A;
+}
+
 </style>
