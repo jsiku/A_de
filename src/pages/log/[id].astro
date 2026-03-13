@@ -27,8 +27,11 @@ export async function getStaticPaths() {
   const postsOnly = sortedAll.filter(
     p => !['memo', 'links'].includes(p.data.type) && !p.data.archived
   );
+  // ✨ 핵심 수정 부분: log 페이지에 보여줄 글들만 따로 필터링합니다. (아카이브 제외)
+  const logEntries = sortedAll.filter((post) => !post.data.archived);
+
   // 3. 메모를 포함한 '모든 글'에 대해 고유 페이지 경로를 생성합니다.
-  return sortedAll.map((post) => {
+  return logEntries.map((post) => {
     let prevPost = null;
     let nextPost = null;
 
@@ -91,11 +94,10 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   <!-- 커버 이미지 영역: 화면을 좌우 꽉 채우고 고정 (패럴랙스) -->
   {post.data.cover && (
     <div id="fade-cover" class="fixed-cover-container">
-      <!-- ✨ 여기서도 || 구문을 삭제하고 엄격하게 문자열인 .src만 넘겨줍니다 -->
+      <div class="cover-overlay"></div>
       <img src={post.data.cover.src} alt="Cover" class="full-bleed-cover" />
     </div>
   )}
-
 
   <!-- 본문 영역: 이미지 밑에 있다가 위로 덮으며 올라옴 -->
   <article class={`post-content-wrapper ${!post.data.cover ? 'no-cover' : ''}`} data-pagefind-body>
@@ -168,36 +170,6 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
   .reading-title {
     font-weight: 500;
     opacity: 0.8;
-  }
-
-  /* 좌우 꽉 차는 고정 커버 이미지 (각진 모서리) */
-  .fixed-cover-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 55vh;
-    z-index: -1;
-    background: #f5f5f5;
-  }
-  .full-bleed-cover {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* 본문 영역 */
-  .post-content-wrapper {
-    margin-top: 45vh; /* 이미지 높이만큼 아래에서 시작하여 이미지를 덮으며 올라옴 */
-    position: relative;
-    z-index: 1;
-    padding: 4rem 20px;
-    min-height: 38vh;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-  }
-  .post-content-wrapper.no-cover {
-    margin-top: 2rem;
-    box-shadow: none;
   }
 
   /* 메타 정보 디자인 */
@@ -290,41 +262,139 @@ const postDate = new Date(post.data.date).toISOString().split('T')[0].replace(/-
     text-decoration: underline; /* 살짝 밑줄이 생기며 클릭 유도 */
   }
 
+/* ✨ BaseLayout 헤더 예외 처리: 스크롤 시 sticky를 무시하고 위로 자연스럽게 올라감 */
+  :global(.site-header) {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 3000;
+    background: #f0f1e8dd !important;
+  }
 
+  /* =========================================
+     커버 이미지 및 아티클 레이아웃 (수정됨)
+     ========================================= */
+
+  /* 💻 데스크탑 기본 (900px 초과): 화면 전체 100vh 고정, 폭을 줄이면 좌우가 잘림 */
+  .fixed-cover-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh; /* 데스크탑에선 무조건 화면 전체 꽉 채움 */
+    z-index: 0;
+  }
+
+  .cover-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .full-bleed-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 높이가 100vh로 고정되어 있으므로, 폭이 줄어들면 이미지 크기가 줄어들지 않고 좌우가 깎임 */
+  }
+
+  /* 본문 영역 */
+  .post-content-wrapper {
+    position: relative;
+    z-index: 100;
+    padding: 104vh 20px 1rem;
+    min-height: 100vh;
+    background-color: #F0F1E8; /* 아티클 배경색이 있어야 이미지를 덮음 */
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+    /* 데스크탑에서 시작 시 반투명 (JS에서 조절) */
+  }
+
+  .post-content-wrapper.no-cover {
+    margin-top: 2rem;
+    padding: 4rem 20px 1rem;
+    box-shadow: none;
+  }
+
+  /* 📱 모바일 반응형 (900px 이하) */
+  @media (max-width: 900px) {
+    .fixed-cover-container {
+      position: sticky; /* 상단에 고정되어 있다가 아티클이 덮음 */
+      top: 0;
+      height: auto;
+    }
+    .full-bleed-cover {
+      width: 152%;
+      height: auto; /* 폭(100%)에 맞춰 원본 비율대로 이미지 전체 크기가 줄어듦 */
+      max-width: none !important; /* 혹시 모를 제한 풀기 */
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      display: block;
+    }
+    .post-content-wrapper {
+      margin-top: 0; /* 모바일: 이미지 바로 밑에서 시작 */
+      padding: 4rem 20px 1rem;
+      opacity: 1 !important; /* 모바일은 항상 아티클이 100% 선명함 */
+    }
+  }
 
 
 </style>
-
 <script>
-  const postNavbar = document.getElementById('postNavbar');
-  const coverContainer = document.getElementById('coverContainer');
-  const globalHeader = document.querySelector('.site-header') as HTMLElement;
-
-  window.addEventListener('scroll', () => {
+  const handleScroll = () => {
+    const isDesktop = window.innerWidth > 900;
     const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
 
-    // 1. 글로벌 헤더 숨기기 (단일 포스트에서만 작동)
-    if (globalHeader) {
-      if (scrollY > 50) {
-        globalHeader.style.transform = 'translateY(-100%)';
-        globalHeader.style.transition = 'transform 0.3s ease';
-      } else {
-        globalHeader.style.transform = 'translateY(0)';
-      }
-    }
+    const article = document.querySelector('.post-content-wrapper') as HTMLElement;
+    const postHeader = document.querySelector('.post-header') as HTMLElement;
+    const coverContainer = document.querySelector('.fixed-cover-container') as HTMLElement;
+    const overlay = document.querySelector('.cover-overlay') as HTMLElement;
+    const postNavbar = document.getElementById('postNavbar');
 
-    // 2. 커버 이미지 페이드아웃 효과
-    if (coverContainer) {
-      const fadeRate = 350;
-      const opacity = Math.max(1 - scrollY / fadeRate, 0);
-      coverContainer.style.opacity = opacity.toString();
-    }
+    if (!article) return;
+    const articleRect = postHeader.getBoundingClientRect();
 
-    // 3. 포스트 전용 겨자색 메뉴바 노출
-    if (scrollY > 150) {
+    // 1. 공통: 포스트 전용  메뉴바 노출 (아티클이 화면 상단에 닿을 즈음)
+    if (articleRect.top <= 50) {
       postNavbar?.classList.add('visible');
     } else {
       postNavbar?.classList.remove('visible');
     }
-  });
+
+    // 2. 데스크탑 동작: 아티클이 올라오면서 투명 -> 선명해짐
+    if (isDesktop) {
+      if (overlay) overlay.style.backgroundColor = 'rgba(0,0,0,0)'; // 이미지 오버레이 비활성
+
+      // 아티클이 화면 하단에서 상단으로 올라오는 진행률 (0: 바닥 ~ 1: 꼭대기)
+      const progress = 1 - (articleRect.top / windowHeight);
+
+      // 0.3(흐릿함)에서 시작해 위로 절반 이상 오면 1(완전 선명함)이 되도록 설정
+      const articleOpacity = Math.min(1, Math.max(0.3, progress * 1.5));
+      article.style.opacity = articleOpacity.toString();
+    }
+    // 3. 모바일 동작: 아티클은 항상 선명, 이미지가 스크롤 할수록 어두워짐
+    else {
+      article.style.opacity = '1'; // 아티클 투명도 해제
+
+      if (coverContainer && overlay) {
+        const coverHeight = coverContainer.offsetHeight;
+        // 스크롤한 양을 이미지 높이로 나누어 진행률 계산
+        const progress = scrollY / coverHeight;
+
+        // 최대 0.7까지만 어두워지게 제한
+        const overlayOpacity = Math.min(1, Math.max(0, progress));
+        overlay.style.backgroundColor = `rgba(240,241,232,${overlayOpacity})`;
+      }
+    }
+  };
+
+  // 이벤트 리스너 등록
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('resize', handleScroll); // 창 크기 조절 시 즉시 반응
+
+  // 로드 직후 바로 초기화 함수 한 번 실행
+  handleScroll();
 </script>

@@ -47,10 +47,11 @@ import PagefindSearch from 'astro-pagefind/components/Search';
   :global(.custom-pagefind .pagefind-ui__results-area) { margin-top: 3rem; }
   :global(.custom-pagefind .pagefind-ui__result) {
     border-bottom: 1px solid #eaeaea !important;
-    padding-bottom: 3rem !important;
-    margin-bottom: 3rem !important;
+    padding-bottom: 1rem !important;
+    margin-bottom: 1rem !important;
     border-top: none !important;
     padding-top: 0 !important;
+    font-family: "Ubuntu Mono", "Bodoni Roman", Bodoni, "Nanum Myeongjo", serif;
   }
   :global(.custom-pagefind .pagefind-ui__result-title) { margin: 0 0 0.8rem 0; font-size: 1.8rem; font-weight: bold; }
   :global(.custom-pagefind .pagefind-ui__result-title .pagefind-ui__result-link) { color: #111; text-decoration: none; }
@@ -62,6 +63,9 @@ import PagefindSearch from 'astro-pagefind/components/Search';
     font-weight: 900 !important;
     border-bottom: 2px solid #111 !important;
   }
+  :global(#search .pagefind-ui__button) {
+  background-color: #E1DDD1;
+}
 </style>
 
 <!-- ✨ 핵심 추가: 클라이언트 사이드 자동 검색 스크립트 -->

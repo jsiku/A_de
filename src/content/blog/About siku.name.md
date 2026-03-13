@@ -1,7 +1,7 @@
 ---
 archived: true
 type: hej
-title: about 20170905
+title: About 20170905
 date: 2017-09-05T00:00:00+09:00
 updated: 2017-09-05T00:00:00+09:00
 description: 블로그를 만든 지 11년쯤 되었을 때 남긴 기록과 플랫폼 변화
