@@ -7,18 +7,23 @@ export async function GET(context: any) {
   return rss({
     title: "Siku.name",
     description: "Moments in progress",
-    // astro.config.mjs에 설정된 site URL을 가져오거나 폴백 주소 사용
     site: context.site || "https://siku.name",
     items: blog.map((post) => {
       const introText = post.data.emailIntro
         ? `${post.data.emailIntro} <br><br>`
         : "";
 
+      // 1. 주소 결정 로직: data.archive 값이 true라면 /archive/, 아니면 /log/ 사용
+      // (만약 필드명이 다르다면 post.data.category === 'archive' 등으로 변경하세요)
+      const folder = post.data.archived ? "archive" : "log";
+      const slug = post.data.slug || post.id;
+
       return {
         title: post.data.title || "Note",
         pubDate: post.data.date,
         description: introText + (post.data.description || ""),
-        link: `/log/${post.data.slug || post.id}/`,
+        // 2. 동적으로 결정된 folder를 경로에 적용
+        link: `/${folder}/${slug}/`,
       };
     }),
   });
