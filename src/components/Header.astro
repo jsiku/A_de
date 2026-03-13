@@ -8,7 +8,7 @@
   <span class="line"></span>
   <span class="line"></span>
 </button>
-    <nav>
+    <nav id="site-nav">
       <a href="/memos">Memos</a>
       <a href="/minis">Minis</a>
       <a href="/links">Links</a>
@@ -31,7 +31,7 @@
     position: sticky;
     top: 0;
     background: #F0F1E8;
-    z-index: 1000;
+    z-index: 4000;
   }
   .header-inner {
     max-width: 900px;
@@ -60,24 +60,41 @@
 
 /* 모바일 전용 (600px) */
 @media (max-width: 600px) {
-  .menu-toggle { display: flex; }
-
-  nav {
-    display: flex; /* 기존 nav의 display를 덮어씀 */
+.menu-toggle {
+    display: flex;
+    position: relative; /* 혹은 fixed */
+    z-index: 9000; /* 메뉴판(8000)보다 높게 설정 */
+  }
+nav {
+    display: flex;
     position: fixed;
     top: 0;
     right: -100%; /* 숨김 상태 */
-    width: 70%;
+
+    /* 폭 조절: 너무 크지 않게 200px~250px 추천 */
+    width: 240px;
     height: 100vh;
-    background: #E1DDD1; /* 배경색 */
+    background: #E1DDD1;
+
+    /* 정렬: 왼쪽 정렬로 변경 */
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    gap: 2.5rem;
-    transition: 0.4s ease;
+    align-items: flex-start; /* 왼쪽 정렬 */
+    padding-left: 40px; /* 왼쪽 여백 */
+
+    gap: 1.5rem; /* 간격 살짝 조절 */
+    transition: right 0.4s ease;
+    z-index: 8000;
   }
 
   nav.is-active { right: 0; } /* 열림 상태 */
+  /* 3. 메뉴 내 텍스트 왼쪽 정렬 강조 */
+  nav a {
+    width: 100%;
+    text-align: left;
+    font-size: 1.1rem;
+  }
+}
 
   /* X자 애니메이션 */
   .menu-toggle.is-active .line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -86,3 +103,12 @@
   .feedLinkForToggleMenu {display: flex;}
 }
 </style>
+<script>
+  const btn = document.getElementById('menu-toggle');
+  const nav = document.getElementById('site-nav'); // <nav id="site-nav">로 ID 추가 필요
+
+  btn?.addEventListener('click', () => {
+    btn.classList.toggle('is-active');
+    nav?.classList.toggle('is-active');
+  });
+</script>
