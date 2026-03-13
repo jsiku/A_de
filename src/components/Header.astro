@@ -3,12 +3,18 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">Siku.name</a>
+<button id="menu-toggle" class="menu-toggle" aria-label="메뉴 열기">
+  <span class="line"></span>
+  <span class="line"></span>
+  <span class="line"></span>
+</button>
     <nav>
       <a href="/memos">Memos</a>
       <a href="/minis">Minis</a>
       <a href="/links">Links</a>
       <a href="/archive">Archive</a>
       <a href="/hej">Hej!</a>
+      <a href="/rss.xml" class="feedLinkForToggleMenu">Feed</a>
     </nav>
   </div>
 </header>
@@ -39,8 +45,44 @@
   nav { display: flex; gap: 2rem; }
   nav a { color: #2b2b2b; text-decoration: none; font-weight: 500; font-size: 1rem; }
 
-  @media (max-width: 600px) {
-    nav { gap: 1rem; }
-    nav a, .logo { font-size: 0.95rem; }
+
+.menu-toggle {
+  display: none; /* 데스크탑에선 숨김 */
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+.line { width: 22px; height: 2px; background: #2b2b2b; transition: 0.3s; }
+.feedLinkForToggleMenu {display: none;}
+
+/* 모바일 전용 (600px) */
+@media (max-width: 600px) {
+  .menu-toggle { display: flex; }
+
+  nav {
+    display: flex; /* 기존 nav의 display를 덮어씀 */
+    position: fixed;
+    top: 0;
+    right: -100%; /* 숨김 상태 */
+    width: 70%;
+    height: 100vh;
+    background: #E1DDD1; /* 배경색 */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    transition: 0.4s ease;
   }
+
+  nav.is-active { right: 0; } /* 열림 상태 */
+
+  /* X자 애니메이션 */
+  .menu-toggle.is-active .line:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle.is-active .line:nth-child(2) { opacity: 0; }
+  .menu-toggle.is-active .line:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .feedLinkForToggleMenu {display: flex;}
+}
 </style>
