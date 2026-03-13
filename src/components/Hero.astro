@@ -31,9 +31,17 @@ const { uniqueTags } = Astro.props;
   .tag-link { color: #555; text-decoration: none; font-weight: 500; }
   .tag-link:hover { color: #111; text-decoration: underline; }
   .all-tags-link { color: #111; font-weight: bold; text-decoration: none; border-bottom: 2px solid #111; white-space: nowrap; margin-left: 2rem; }
-  @media (max-width:800px){
-  .tags-container{
-    justify-content:flex-start;
+* --- 모바일 뷰 수정 (600px 기준) --- */
+@media (max-width: 600px) {
+  .tags-container {
+    flex-direction: column; /* 세로 방향으로 정렬 */
+    gap: 1.5rem;            /* 태그 목록과 All tags 사이 간격 */
+  }
+
+  .all-tags-link {
+    margin-left: 0;         /* 모바일에서는 왼쪽 여백 제거 */
+    align-self: flex-start; /* 왼쪽 정렬 유지 */
+    font-size: 0.9rem;      /* 선택 사항: 모바일에서 폰트 살짝 조정 */
   }
 }
 </style>
